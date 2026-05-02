@@ -77,7 +77,6 @@ public/hls/stream_%v.m3u8
 
 After running FFmpeg:
 
-```bash
 public/hls/
 <br />
  ├── master.m3u8
@@ -93,7 +92,6 @@ public/hls/
  ├── stream_1_000.ts
 <br/>
  └── ...
-```
 
 ---
 
