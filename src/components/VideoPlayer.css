@@ -125,6 +125,36 @@
   transform-origin: center;
 }
 
+/* Restart button */
+.restart-btn {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.18s ease,
+              background 0.18s ease,
+              box-shadow 0.18s ease;
+  color: var(--sf-text);
+}
+
+.restart-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+}
+
+.restart-btn:active {
+  transform: scale(0.95);
+}
+
 /* -----------------------------------------------------------
    Time display
    ----------------------------------------------------------- */
@@ -342,16 +372,13 @@
 .center-play-btn {
   position: relative;
   z-index: 6;
-
   width: 90px;
   height: 90px;
   border-radius: 50%;
-
   background: linear-gradient(135deg, var(--sf-accent-2), var(--sf-accent));
   display: flex;
   align-items: center;
   justify-content: center;
-
   box-shadow: 0 10px 30px var(--sf-glow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }

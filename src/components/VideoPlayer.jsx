@@ -57,6 +57,7 @@ const VideoPlayer = () => {
 
   // syncing UI with current video time and duration
   // handling buffering state based on video events
+  // handling thumbnail display on play
   useEffect(() => {
     const video = videoRef.current;
 
@@ -106,7 +107,7 @@ const VideoPlayer = () => {
     const video = videoRef.current;
     video.currentTime = e.target.value;
     setCurrentTime(e.target.value);
-  }
+  };
 
   // format time in mm:ss for display
   const formatTime = (time) => {
@@ -117,7 +118,7 @@ const VideoPlayer = () => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  }
+  };
 
   // handling manual video quality change
   const handleQualityChange = (e) => {
@@ -127,7 +128,16 @@ const VideoPlayer = () => {
     if(hlsRef.current) {
         hlsRef.current.currentLevel = levelIndex;
     }
-  }
+  };
+
+  const handleRestart = () => {
+    const video = videoRef.current;
+    video.currentTime = 0;
+    setCurrentTime(0);
+    video.play();
+    setIsPlaying(true);
+    setShowThumbnail(false);
+  };
 
   return (
     <div className="player-container">
@@ -172,6 +182,11 @@ const VideoPlayer = () => {
               <polygon points="5,3 19,12 5,21" />
             </svg>
           )}
+        </button>
+
+        {/* Restart Button */}
+        <button className="restart-btn" onClick={handleRestart}>
+            ↻
         </button>
 
         {/* Current Time / Duration Display */}
