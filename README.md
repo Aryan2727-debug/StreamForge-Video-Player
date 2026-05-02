@@ -143,7 +143,7 @@ hls.loadSource("/hls/master.m3u8");
 ## 🚀 Next Steps
 
 - Add functionality to select from multiple streams
-- Add poster/thumbnail, show play button on thumbnail
+- Add restart video button
 - Extract Player Logic (Architecture Upgrade)  
 
 ---

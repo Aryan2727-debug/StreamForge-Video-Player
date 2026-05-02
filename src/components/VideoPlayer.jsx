@@ -12,6 +12,7 @@ const VideoPlayer = () => {
   const [levels, setLevels] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState(-1); // -1 for Auto
   const [isBuffering, setIsBuffering] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(true); // for thumbnail poster display
 
   // Progress %
   const progress = duration ? (currentTime / duration) * 100 : 0;
@@ -71,12 +72,18 @@ const VideoPlayer = () => {
     video.addEventListener("waiting", handleBuffering);
     video.addEventListener("stalled", handleBuffering);
     video.addEventListener("playing", handlePlaying);
+    video.addEventListener("playing", () => {
+        setShowThumbnail(false);
+    });
 
     return () => {
         video.removeEventListener("timeupdate", updateTime);
         video.removeEventListener("waiting", handleBuffering);
         video.removeEventListener("stalled", handleBuffering);
         video.removeEventListener("playing", handlePlaying);
+        video.removeEventListener("playing", () => {
+            setShowThumbnail(false);
+        });
     };
   }, []);
 
@@ -87,6 +94,7 @@ const VideoPlayer = () => {
     if(video.paused) {
         video.play();
         setIsPlaying(true);
+        setShowThumbnail(false);
     } else {
         video.pause();
         setIsPlaying(false);
@@ -125,10 +133,27 @@ const VideoPlayer = () => {
     <div className="player-container">
       <video ref={videoRef} className="video" />
 
+      {/* Poster Thumbnail */}
+      {showThumbnail && (
+        <div className="poster-overlay" onClick={togglePlay}>
+          <img
+            src="/thumbnail.png"
+            alt="thumbnail"
+            className="poster-image"
+          />
+
+          <div className="center-play-btn">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
+              <polygon points="5,3 19,12 5,21" />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* Buffering Spinner */}
       {isBuffering && (
         <div className="spinner-overlay">
-            <div className="spinner"></div>
+          <div className="spinner"></div>
         </div>
       )}
 
@@ -138,20 +163,20 @@ const VideoPlayer = () => {
           {isPlaying ? (
             // Pause Icon
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-            <rect x="6" y="5" width="4" height="14" />
-            <rect x="14" y="5" width="4" height="14" />
+              <rect x="6" y="5" width="4" height="14" />
+              <rect x="14" y="5" width="4" height="14" />
             </svg>
-        ) : (
+          ) : (
             // Play Icon
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-            <polygon points="5,3 19,12 5,21" />
+              <polygon points="5,3 19,12 5,21" />
             </svg>
-        )}
+          )}
         </button>
 
         {/* Current Time / Duration Display */}
         <span className="time">
-            {formatTime(currentTime)} / {formatTime(duration)}
+          {formatTime(currentTime)} / {formatTime(duration)}
         </span>
 
         {/* Quality */}
@@ -159,22 +184,22 @@ const VideoPlayer = () => {
 
         {/* Quality Selector */}
         <select
-            className="quality-selector"
-            value={selectedLevel}
-            onChange={handleQualityChange}
+          className="quality-selector"
+          value={selectedLevel}
+          onChange={handleQualityChange}
         >
-            <option value={-1}>Auto</option>
-            {levels.map(function(level, index) {
-                return (
-                    <option key={index} value={index}>
-                        {level.height}p
-                    </option>
-                )
-            })}
+          <option value={-1}>Auto</option>
+          {levels.map(function (level, index) {
+            return (
+              <option key={index} value={index}>
+                {level.height}p
+              </option>
+            );
+          })}
         </select>
 
         {/* Seek Bar */}
-        <input 
+        <input
           type="range"
           className="seek-bar"
           min="0"
@@ -182,7 +207,7 @@ const VideoPlayer = () => {
           value={currentTime}
           onChange={handleSeek}
           style={{
-            background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`
+            background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
           }}
         />
       </div>
