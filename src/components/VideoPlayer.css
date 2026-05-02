@@ -50,6 +50,16 @@
   min-width: 50px;
 }
 
+/* Quality selector */
+.quality-selector {
+  background: black;
+  color: white;
+  border: 1px solid blue;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 /* Time display */
 .time {
   color: white;

@@ -141,8 +141,7 @@ hls.loadSource("/hls/master.m3u8");
 ---
 
 ## 🚀 Next Steps
-
-- Add manual quality selector  
+  
 - Handle buffering and errors  
 
 ---

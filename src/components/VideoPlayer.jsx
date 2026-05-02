@@ -9,6 +9,8 @@ const VideoPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [quality, setQuality] = useState("Auto");
+  const [levels, setLevels] = useState([]);
+  const [selectedLevel, setSelectedLevel] = useState(-1); // -1 for Auto
 
   // HLS set up and cleanup
   useEffect(() => {
@@ -24,6 +26,8 @@ const VideoPlayer = () => {
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play();
         setIsPlaying(true);
+        // capturing the available quality levels
+        setLevels(hls.levels);
       });
 
       // tracking quality changes
@@ -90,8 +94,17 @@ const VideoPlayer = () => {
 
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  // handling manual video quality change
+  const handleQualityChange = (e) => {
+    const levelIndex = Number(e.target.value);
+    setSelectedLevel(levelIndex);
+
+    if(hlsRef.current) {
+        hlsRef.current.currentLevel = levelIndex;
+    }
   }
 
   return (
@@ -122,6 +135,22 @@ const VideoPlayer = () => {
 
         {/* Quality */}
         <span className="quality">{quality}</span>
+
+        {/* Quality Selector */}
+        <select
+            className="quality-selector"
+            value={selectedLevel}
+            onChange={handleQualityChange}
+        >
+            <option value={-1}>Auto</option>
+            {levels.map(function(level, index) {
+                return (
+                    <option key={index} value={index}>
+                        {level.height}p
+                    </option>
+                )
+            })}
+        </select>
 
         {/* Seek Bar */}
         <input 
