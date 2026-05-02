@@ -28,11 +28,12 @@ This project is a simple React-based video player that plays HLS (HTTP Live Stre
 
 ### 1. Create Project
 
+```bash
 npm create vite@latest streamforge
 cd streamforge
 npm install
 npm run dev
-
+```
 ---
 
 ### 2. Install HLS Library
