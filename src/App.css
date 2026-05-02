@@ -1,9 +1,202 @@
-.app {
-  text-align: center;
-  padding: 20px;
-  font-family: Arial;
+/* ===========================================================
+   StreamForge — Page-level styling
+   Targets: <div className="app"> > <h1> + <VideoPlayer />
+   Overrides index.css where needed (no JSX changes).
+   =========================================================== */
+
+/* Reset the rigid #root frame from index.css so the page can breathe */
+#root {
+  width: 100% !important;
+  max-width: none !important;
+  border-inline: none !important;
+  text-align: left !important;
+  min-height: 100svh;
+  background: transparent;
 }
 
+/* Full-bleed cinematic backdrop */
+html, body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(229, 9, 20, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 95% 8%,  rgba(120, 0, 200, 0.18), transparent 65%),
+    radial-gradient(1000px 700px at 50% 110%, rgba(0, 130, 255, 0.10), transparent 60%),
+    linear-gradient(180deg, #0a0a0d 0%, #08080b 50%, #050507 100%);
+  background-attachment: fixed;
+  color: #e9e9ee;
+  min-height: 100svh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Subtle film-grain noise overlay for a premium OTT feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>");
+}
+
+/* -----------------------------------------------------------
+   App shell
+   ----------------------------------------------------------- */
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  padding: 28px clamp(16px, 4vw, 48px) 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: inherit;
+  color: #e9e9ee;
+}
+
+/* Brand mark (top-left) — pure CSS, no JSX changes */
+.app::before {
+  content: "STREAMFORGE";
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  margin: 4px 0 28px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff2a36, #e50914);
+  border-radius: 6px;
+  box-shadow:
+    0 6px 18px rgba(229, 9, 20, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* -----------------------------------------------------------
+   Page title — OTT hero treatment
+   ----------------------------------------------------------- */
+.app h1 {
+  position: relative;
+  margin: 8px auto 6px;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  font-weight: 800;
+  font-size: clamp(34px, 5.4vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -1.6px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #c9c9d4 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Eyebrow text above the title */
+.app h1::before {
+  content: "Adaptive HLS streaming · Production-grade player";
+  display: block;
+  margin: 0 auto 12px;
+  font-size: clamp(12px, 1.2vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.55);
+  background: none;
+}
+
+/* Animated red underline accent under the title */
+.app h1::after {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 4px;
+  margin: 14px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff2a36, #e50914);
+  box-shadow: 0 0 14px rgba(229, 9, 20, 0.65);
+  animation: sf-underline 2.4s ease-in-out infinite;
+}
+
+@keyframes sf-underline {
+  0%, 100% { transform: scaleX(1);    opacity: 1;    }
+  50%      { transform: scaleX(1.35); opacity: 0.85; }
+}
+
+/* -----------------------------------------------------------
+   Player wrapper — gives the existing player room + a halo
+   ----------------------------------------------------------- */
+.app .player-container {
+  margin-top: 36px !important;
+  margin-bottom: 24px !important;
+}
+
+/* Ambient glow behind the player (pure CSS) */
+.app .player-container::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 60% at 50% 50%, rgba(229, 9, 20, 0.22), transparent 70%),
+    radial-gradient(40% 40% at 20% 80%, rgba(120, 0, 200, 0.18), transparent 70%);
+  filter: blur(20px);
+  opacity: 0.9;
+  border-radius: 40px;
+}
+
+/* -----------------------------------------------------------
+   Footer-style attribution caption (CSS-only)
+   ----------------------------------------------------------- */
+.app::after {
+  content: "Powered by hls.js · React · Vite";
+  display: inline-block;
+  margin-top: 28px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Container handles rounding now */
 video {
-  border-radius: 8px;
+  border-radius: 0;
+}
+
+/* -----------------------------------------------------------
+   Responsive
+   ----------------------------------------------------------- */
+@media (max-width: 720px) {
+  .app {
+    padding: 18px 14px 40px;
+  }
+  .app::before {
+    align-self: center;
+    margin-bottom: 18px;
+    letter-spacing: 3px;
+  }
+  .app h1::before {
+    letter-spacing: 2px;
+  }
+  .app .player-container::after {
+    inset: -16px;
+    filter: blur(14px);
+  }
 }
