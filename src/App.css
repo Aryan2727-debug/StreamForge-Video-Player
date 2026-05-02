@@ -1,0 +1,9 @@
+.app {
+  text-align: center;
+  padding: 20px;
+  font-family: Arial;
+}
+
+video {
+  border-radius: 8px;
+}
