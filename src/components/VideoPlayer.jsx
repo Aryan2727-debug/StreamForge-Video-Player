@@ -11,6 +11,7 @@ const VideoPlayer = () => {
   const [quality, setQuality] = useState("Auto");
   const [levels, setLevels] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState(-1); // -1 for Auto
+  const [isBuffering, setIsBuffering] = useState(false);
 
   // HLS set up and cleanup
   useEffect(() => {
@@ -51,6 +52,7 @@ const VideoPlayer = () => {
   }, []);
 
   // syncing UI with current video time and duration
+  // handling buffering state based on video events
   useEffect(() => {
     const video = videoRef.current;
 
@@ -59,10 +61,19 @@ const VideoPlayer = () => {
         setDuration(video.duration || 0);
     }
 
+    const handleBuffering = () => setIsBuffering(true);
+    const handlePlaying = () => setIsBuffering(false);
+
     video.addEventListener("timeupdate", updateTime);
+    video.addEventListener("waiting", handleBuffering);
+    video.addEventListener("stalled", handleBuffering);
+    video.addEventListener("playing", handlePlaying);
 
     return () => {
         video.removeEventListener("timeupdate", updateTime);
+        video.removeEventListener("waiting", handleBuffering);
+        video.removeEventListener("stalled", handleBuffering);
+        video.removeEventListener("playing", handlePlaying);
     };
   }, []);
 
@@ -110,6 +121,13 @@ const VideoPlayer = () => {
   return (
     <div className="player-container">
       <video ref={videoRef} className="video" />
+
+      {/* Buffering Spinner */}
+      {isBuffering && (
+        <div className="spinner-overlay">
+            <div className="spinner"></div>
+        </div>
+      )}
 
       <div className="controls">
         {/* Play / Pause */}

@@ -142,7 +142,6 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Add loading spinner / buffering indicator
 - Add a blue progress fill 
 - Handle buffering and errors  
 
