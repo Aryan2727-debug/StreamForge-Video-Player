@@ -38,7 +38,9 @@ npm run dev
 
 ### 2. Install HLS Library
 
+```bash
 npm install hls.js
+```
 
 ---
 
@@ -54,6 +56,7 @@ public/videos/sample.mp4
 
 Run this command:
 
+```bash
 ffmpeg -i public/videos/sample.mp4 ^
 -filter_complex "[0:v]split=3[v1][v2][v3];[v1]scale=1280:720[v1out];[v2]scale=854:480[v2out];[v3]scale=426:240[v3out]" ^
 -map "[v1out]" -map 0:a ^
@@ -66,6 +69,7 @@ ffmpeg -i public/videos/sample.mp4 ^
 -master_pl_name master.m3u8 ^
 -var_stream_map "v:0,a:0 v:1,a:1 v:2,a:2" ^
 public/hls/stream_%v.m3u8
+```
 
 ---
 
@@ -74,12 +78,19 @@ public/hls/stream_%v.m3u8
 After running FFmpeg:
 
 public/hls/
+<br />
  ├── master.m3u8
+<br/>
  ├── stream_0.m3u8
+<br/>
  ├── stream_1.m3u8
+<br/>
  ├── stream_2.m3u8
+<br/>
  ├── stream_0_000.ts
+<br/>
  ├── stream_1_000.ts
+<br/>
  └── ...
 
 ---
@@ -105,7 +116,9 @@ public/hls/
 
 Basic usage:
 
+```bash
 hls.loadSource("/hls/master.m3u8");
+```
 
 ---
 
