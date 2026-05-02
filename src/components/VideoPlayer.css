@@ -14,7 +14,13 @@
 .controls {
   position: absolute;
   bottom: 10px;
-  left: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 /* Play button */
@@ -24,7 +30,6 @@
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,4 +41,42 @@
 
 .play-btn svg {
   display: block;
+}
+
+/* Seek Bar Container */
+.seek-bar {
+  flex: 1;
+  cursor: pointer;
+  -webkit-appearance: none;
+  height: 5px;
+  background: #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Thumb */
+.seek-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: blue;
+  margin-top: -4px;
+  cursor: pointer;
+}
+
+/* Progress (Chrome) */
+.seek-bar::-webkit-slider-runnable-track {
+  height: 5px;
+  background: #ccc;
+  border-radius: 5px;
+}
+
+/* Firefox */
+.seek-bar::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: blue;
+  cursor: pointer;
 }

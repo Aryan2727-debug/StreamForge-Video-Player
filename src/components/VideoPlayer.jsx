@@ -5,6 +5,8 @@ import './VideoPlayer.css';
 const VideoPlayer = () => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -32,6 +34,23 @@ const VideoPlayer = () => {
     }
   }, []);
 
+  // syncing UI with current video time and duration
+  useEffect(() => {
+    const video = videoRef.current;
+
+    const updateTime = () => {
+        setCurrentTime(video.currentTime);
+        setDuration(video.duration || 0);
+    }
+
+    video.addEventListener("timeupdate", updateTime);
+
+    return () => {
+        video.removeEventListener("timeupdate", updateTime);
+    };
+  }, []);
+
+  // toggle play/pause state
   const togglePlay = () => {
     const video = videoRef.current;
 
@@ -44,11 +63,19 @@ const VideoPlayer = () => {
     }
   };
 
+  // handle user seek actions
+  const handleSeek = (e) => {
+    const video = videoRef.current;
+    video.currentTime = e.target.value;
+    setCurrentTime(e.target.value);
+  }
+
   return (
     <div className="player-container">
       <video ref={videoRef} className="video" />
 
       <div className="controls">
+        {/* Play / Pause */}
         <button className="play-btn" onClick={togglePlay}>
           {isPlaying ? (
             // Pause Icon
@@ -63,6 +90,16 @@ const VideoPlayer = () => {
             </svg>
         )}
         </button>
+
+        {/* Seek Bar */}
+        <input 
+          type="range"
+          className="seek-bar"
+          min="0"
+          max={duration}
+          value={currentTime}
+          onChange={handleSeek}
+        />
       </div>
     </div>
   );
