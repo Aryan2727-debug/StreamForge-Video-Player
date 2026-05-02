@@ -43,6 +43,14 @@
   display: block;
 }
 
+/* Time display */
+.time {
+  color: white;
+  font-size: 14px;
+  min-width: 80px;
+  text-align: center;
+}
+
 /* Seek Bar Container */
 .seek-bar {
   flex: 1;

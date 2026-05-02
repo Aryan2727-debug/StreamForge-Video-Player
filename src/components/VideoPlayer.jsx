@@ -70,6 +70,17 @@ const VideoPlayer = () => {
     setCurrentTime(e.target.value);
   }
 
+  const formatTime = (time) => {
+    if(!time) {
+        return "00:00";
+    }
+
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
   return (
     <div className="player-container">
       <video ref={videoRef} className="video" />
@@ -90,6 +101,11 @@ const VideoPlayer = () => {
             </svg>
         )}
         </button>
+
+        {/* Current Time / Duration Display */}
+        <span className="time">
+            {formatTime(currentTime)} / {formatTime(duration)}
+        </span>
 
         {/* Seek Bar */}
         <input 

@@ -142,7 +142,6 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Display current video timestamp  
 - Display current video quality  
 - Add manual quality selector  
 - Handle buffering and errors  
