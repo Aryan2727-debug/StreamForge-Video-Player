@@ -13,6 +13,9 @@ const VideoPlayer = () => {
   const [selectedLevel, setSelectedLevel] = useState(-1); // -1 for Auto
   const [isBuffering, setIsBuffering] = useState(false);
 
+  // Progress %
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+
   // HLS set up and cleanup
   useEffect(() => {
     const video = videoRef.current;
@@ -178,6 +181,9 @@ const VideoPlayer = () => {
           max={duration}
           value={currentTime}
           onChange={handleSeek}
+          style={{
+            background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`
+          }}
         />
       </div>
     </div>
