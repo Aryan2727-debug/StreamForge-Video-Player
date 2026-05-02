@@ -4,15 +4,19 @@ import './VideoPlayer.css';
 
 const VideoPlayer = () => {
   const videoRef = useRef(null);
+  const hlsRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [quality, setQuality] = useState("Auto");
 
+  // HLS set up and cleanup
   useEffect(() => {
     const video = videoRef.current;
 
     if (Hls.isSupported()) {
       const hls = new Hls();
+      hlsRef.current = hls;
 
       hls.loadSource("/hls/master.m3u8"); // use index.m3u8 if single
       hls.attachMedia(video);
@@ -20,6 +24,14 @@ const VideoPlayer = () => {
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play();
         setIsPlaying(true);
+      });
+
+      // tracking quality changes
+      hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
+        const level = hls.levels[data.level];
+        if(level) {
+            setQuality(`${level.height}p`);
+        }
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
@@ -70,6 +82,7 @@ const VideoPlayer = () => {
     setCurrentTime(e.target.value);
   }
 
+  // format time in mm:ss for display
   const formatTime = (time) => {
     if(!time) {
         return "00:00";
@@ -106,6 +119,9 @@ const VideoPlayer = () => {
         <span className="time">
             {formatTime(currentTime)} / {formatTime(duration)}
         </span>
+
+        {/* Quality */}
+        <span className="quality">{quality}</span>
 
         {/* Seek Bar */}
         <input 

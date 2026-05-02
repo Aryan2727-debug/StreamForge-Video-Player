@@ -43,6 +43,13 @@
   display: block;
 }
 
+/* Quality display */
+.quality {
+  color: white;
+  font-size: 14px;
+  min-width: 50px;
+}
+
 /* Time display */
 .time {
   color: white;
