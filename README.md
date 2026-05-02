@@ -142,7 +142,9 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Handle buffering and errors  
+- Improve general UI
+- Add poster/thumbnail, show play button on thumbnail
+- Extract Player Logic (Architecture Upgrade)  
 
 ---
 
