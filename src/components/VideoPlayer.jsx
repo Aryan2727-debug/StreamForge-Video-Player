@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Hls from "hls.js";
+import './VideoPlayer.css';
 
 const VideoPlayer = () => {
   const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -14,8 +16,8 @@ const VideoPlayer = () => {
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('HLS Levels:', hls.levels);
         video.play();
+        setIsPlaying(true);
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
@@ -30,13 +32,39 @@ const VideoPlayer = () => {
     }
   }, []);
 
+  const togglePlay = () => {
+    const video = videoRef.current;
+
+    if(video.paused) {
+        video.play();
+        setIsPlaying(true);
+    } else {
+        video.pause();
+        setIsPlaying(false);
+    }
+  };
+
   return (
-    <video
-      ref={videoRef}
-      controls
-      width="800"
-      style={{ background: "black" }}
-    />
+    <div className="player-container">
+      <video ref={videoRef} className="video" />
+
+      <div className="controls">
+        <button className="play-btn" onClick={togglePlay}>
+          {isPlaying ? (
+            // Pause Icon
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <rect x="6" y="5" width="4" height="14" />
+            <rect x="14" y="5" width="4" height="14" />
+            </svg>
+        ) : (
+            // Play Icon
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <polygon points="5,3 19,12 5,21" />
+            </svg>
+        )}
+        </button>
+      </div>
+    </div>
   );
 };
 

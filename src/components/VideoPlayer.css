@@ -1,0 +1,39 @@
+.player-container {
+  position: relative;
+  width: 800px;
+  margin: 20px auto;
+  background: black;
+}
+
+.video {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* Controls container */
+.controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+/* Play button */
+.play-btn {
+  background: blue;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-btn:hover {
+  background: blue;
+}
+
+.play-btn svg {
+  display: block;
+}
