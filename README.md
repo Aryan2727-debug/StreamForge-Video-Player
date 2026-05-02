@@ -142,9 +142,8 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Add functionality to select from multiple streams
-- Add fullscreen functionality
-- Extract Player Logic (Architecture Upgrade)  
+- Extract Player Logic (Architecture Upgrade)
+- Add functionality to select from multiple streams  
 
 ---
 

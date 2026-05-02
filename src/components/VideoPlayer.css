@@ -388,6 +388,33 @@
   box-shadow: 0 14px 40px var(--sf-glow);
 }
 
+/* Fullscreen button */
+.fullscreen-btn {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  transition: transform 0.18s ease,
+              background 0.18s ease;
+}
+
+.fullscreen-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.fullscreen-btn:active {
+  transform: scale(0.95);
+}
+
 @keyframes sf-spin {
   to { transform: rotate(360deg); }
 }
