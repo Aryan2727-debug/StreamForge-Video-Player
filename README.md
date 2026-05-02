@@ -143,7 +143,6 @@ hls.loadSource("/hls/master.m3u8");
 ## 🚀 Next Steps
 
 - Add functionality to select from multiple streams
-- Improve general UI
 - Add poster/thumbnail, show play button on thumbnail
 - Extract Player Logic (Architecture Upgrade)  
 
