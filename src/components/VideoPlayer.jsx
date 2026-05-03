@@ -1,269 +1,142 @@
-import { useState, useEffect, useRef } from "react";
-import Hls from "hls.js";
+import usePlayer from '../hooks/usePlayer';
 import './VideoPlayer.css';
 
 const VideoPlayer = () => {
-  const videoRef = useRef(null);
-  const hlsRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [quality, setQuality] = useState("Auto");
-  const [levels, setLevels] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState(-1); // -1 for Auto
-  const [isBuffering, setIsBuffering] = useState(false);
-  const [showThumbnail, setShowThumbnail] = useState(true); // for thumbnail poster display
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Progress %
-  const progress = duration ? (currentTime / duration) * 100 : 0;
+    const {
+        videoRef,
+        isPlaying,
+        currentTime,
+        duration,
+        quality,
+        levels,
+        selectedLevel,
+        isBuffering,
+        showThumbnail,
+        isFullscreen,
+        progress,
+        togglePlay,
+        handleSeek,
+        handleRestart,
+        handleQualityChange,
+        toggleFullscreen,
+    } = usePlayer();
 
-  // HLS set up and cleanup
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hlsRef.current = hls;
-
-      hls.loadSource("/hls/master.m3u8"); // use index.m3u8 if single
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play();
-        setIsPlaying(true);
-        // capturing the available quality levels
-        setLevels(hls.levels);
-      });
-
-      // tracking quality changes
-      hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
-        const level = hls.levels[data.level];
-        if(level) {
-            setQuality(`${level.height}p`);
+    // format time in mm:ss for display
+    const formatTime = (time) => {
+        if(!time) {
+            return "00:00";
         }
-      });
 
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error("HLS Error:", data);
-      });
-
-      return () => {
-        hls.destroy();
-      };
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = "/hls/master.m3u8";
-    }
-  }, []);
-
-  // syncing UI with current video time and duration
-  // handling buffering state based on video events
-  // handling thumbnail display on play
-  useEffect(() => {
-    const video = videoRef.current;
-
-    const updateTime = () => {
-        setCurrentTime(video.currentTime);
-        setDuration(video.duration || 0);
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
 
-    const handleFullscreenChange = () => {
-        setIsFullscreen(!!document.fullscreenElement);
-    };
+    return (
+        <div className="player-container">
+        <video ref={videoRef} className="video" />
 
-    const handleBuffering = () => setIsBuffering(true);
-    const handlePlaying = () => setIsBuffering(false);
+        {/* Poster Thumbnail */}
+        {showThumbnail && (
+            <div className="poster-overlay" onClick={togglePlay}>
+            <img
+                src="/thumbnail.png"
+                alt="thumbnail"
+                className="poster-image"
+            />
 
-    video.addEventListener("timeupdate", updateTime);
-    video.addEventListener("waiting", handleBuffering);
-    video.addEventListener("stalled", handleBuffering);
-    video.addEventListener("playing", handlePlaying);
-    video.addEventListener("playing", () => {
-        setShowThumbnail(false);
-    });
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+            <div className="center-play-btn">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
+                <polygon points="5,3 19,12 5,21" />
+                </svg>
+            </div>
+            </div>
+        )}
 
-    return () => {
-        video.removeEventListener("timeupdate", updateTime);
-        video.removeEventListener("waiting", handleBuffering);
-        video.removeEventListener("stalled", handleBuffering);
-        video.removeEventListener("playing", handlePlaying);
-        video.removeEventListener("playing", () => {
-            setShowThumbnail(false);
-        });
-        document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
+        {/* Buffering Spinner */}
+        {isBuffering && (
+            <div className="spinner-overlay">
+            <div className="spinner"></div>
+            </div>
+        )}
 
-  // toggle play/pause state
-  const togglePlay = () => {
-    const video = videoRef.current;
-
-    if(video.paused) {
-        video.play();
-        setIsPlaying(true);
-        setShowThumbnail(false);
-    } else {
-        video.pause();
-        setIsPlaying(false);
-    }
-  };
-
-  // handle user seek actions
-  const handleSeek = (e) => {
-    const video = videoRef.current;
-    video.currentTime = e.target.value;
-    setCurrentTime(e.target.value);
-  };
-
-  // format time in mm:ss for display
-  const formatTime = (time) => {
-    if(!time) {
-        return "00:00";
-    }
-
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  };
-
-  // handling manual video quality change
-  const handleQualityChange = (e) => {
-    const levelIndex = Number(e.target.value);
-    setSelectedLevel(levelIndex);
-
-    if(hlsRef.current) {
-        hlsRef.current.currentLevel = levelIndex;
-    }
-  };
-
-  // restart video from beginning
-  const handleRestart = () => {
-    const video = videoRef.current;
-    video.currentTime = 0;
-    setCurrentTime(0);
-    video.play();
-    setIsPlaying(true);
-    setShowThumbnail(false);
-  };
-
-  // toggle fullscreen mode
-  const toggleFullscreen = () => {
-    const videoContainer = videoRef.current.parentElement;
-
-    if(!document.fullscreenElement) {
-        videoContainer.requestFullscreen();
-        setIsFullscreen(true);
-    } else {
-        document.exitFullscreen();
-        setIsFullscreen(false);
-    }
-  }
-
-  return (
-    <div className="player-container">
-      <video ref={videoRef} className="video" />
-
-      {/* Poster Thumbnail */}
-      {showThumbnail && (
-        <div className="poster-overlay" onClick={togglePlay}>
-          <img
-            src="/thumbnail.png"
-            alt="thumbnail"
-            className="poster-image"
-          />
-
-          <div className="center-play-btn">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
-          </div>
-        </div>
-      )}
-
-      {/* Buffering Spinner */}
-      {isBuffering && (
-        <div className="spinner-overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
-
-      <div className="controls">
-        {/* Play / Pause */}
-        <button className="play-btn" onClick={togglePlay}>
-          {isPlaying ? (
-            // Pause Icon
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-              <rect x="6" y="5" width="4" height="14" />
-              <rect x="14" y="5" width="4" height="14" />
-            </svg>
-          ) : (
-            // Play Icon
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
-          )}
-        </button>
-
-        {/* Restart Button */}
-        <button className="restart-btn" onClick={handleRestart}>
-            ↻
-        </button>
-
-        {/* Current Time / Duration Display */}
-        <span className="time">
-          {formatTime(currentTime)} / {formatTime(duration)}
-        </span>
-
-        {/* Quality */}
-        <span className="quality">{quality}</span>
-
-        {/* Quality Selector */}
-        <select
-          className="quality-selector"
-          value={selectedLevel}
-          onChange={handleQualityChange}
-        >
-          <option value={-1}>Auto</option>
-          {levels.map(function (level, index) {
-            return (
-              <option key={index} value={index}>
-                {level.height}p
-              </option>
-            );
-          })}
-        </select>
-
-        {/* Seek Bar */}
-        <input
-          type="range"
-          className="seek-bar"
-          min="0"
-          max={duration}
-          value={currentTime}
-          onChange={handleSeek}
-          style={{
-            background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
-          }}
-        />
-
-        {/* Fullscreen Button */}
-        <button className="fullscreen-btn" onClick={toggleFullscreen}>
-            {isFullscreen ? (
-                // Exit fullscreen icon
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                <path d="M6 16h2v2h2v2H6v-4zm8 0h4v4h-4v-2h2v-2h-2v-2zm-8-8V4h4v2H8v2H6zm10 0V6h-2V4h4v4h-2z" />
+        <div className="controls">
+            {/* Play / Pause */}
+            <button className="play-btn" onClick={togglePlay}>
+            {isPlaying ? (
+                // Pause Icon
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <rect x="6" y="5" width="4" height="14" />
+                <rect x="14" y="5" width="4" height="14" />
                 </svg>
             ) : (
-                // Enter fullscreen icon
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                <path d="M7 14H5v5h5v-2H7v-3zm12 5v-5h-2v3h-3v2h5zM7 7h3V5H5v5h2V7zm10 3h2V5h-5v2h3v3z" />
+                // Play Icon
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <polygon points="5,3 19,12 5,21" />
                 </svg>
             )}
-        </button>
-      </div>
-    </div>
-  );
+            </button>
+
+            {/* Restart Button */}
+            <button className="restart-btn" onClick={handleRestart}>
+                ↻
+            </button>
+
+            {/* Current Time / Duration Display */}
+            <span className="time">
+            {formatTime(currentTime)} / {formatTime(duration)}
+            </span>
+
+            {/* Quality */}
+            <span className="quality">{quality}</span>
+
+            {/* Quality Selector */}
+            <select
+            className="quality-selector"
+            value={selectedLevel}
+            onChange={handleQualityChange}
+            >
+            <option value={-1}>Auto</option>
+            {levels.map(function (level, index) {
+                return (
+                <option key={index} value={index}>
+                    {level.height}p
+                </option>
+                );
+            })}
+            </select>
+
+            {/* Seek Bar */}
+            <input
+            type="range"
+            className="seek-bar"
+            min="0"
+            max={duration}
+            value={currentTime}
+            onChange={handleSeek}
+            style={{
+                background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
+            }}
+            />
+
+            {/* Fullscreen Button */}
+            <button className="fullscreen-btn" onClick={toggleFullscreen}>
+                {isFullscreen ? (
+                    // Exit fullscreen icon
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                    <path d="M6 16h2v2h2v2H6v-4zm8 0h4v4h-4v-2h2v-2h-2v-2zm-8-8V4h4v2H8v2H6zm10 0V6h-2V4h4v4h-2z" />
+                    </svg>
+                ) : (
+                    // Enter fullscreen icon
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                    <path d="M7 14H5v5h5v-2H7v-3zm12 5v-5h-2v3h-3v2h5zM7 7h3V5H5v5h2V7zm10 3h2V5h-5v2h3v3z" />
+                    </svg>
+                )}
+            </button>
+        </div>
+        </div>
+    );
 };
 
 export default VideoPlayer;
