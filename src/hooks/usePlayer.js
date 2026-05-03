@@ -13,6 +13,7 @@ const usePlayer = () => {
     const [isBuffering, setIsBuffering] = useState(false);
     const [showThumbnail, setShowThumbnail] = useState(true); // for thumbnail poster display
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [actionOverlay, setActionOverlay] = useState(null); // for showing temporary overlays like Play/Pause, +5s/-5s
 
     // Progress %
     const progress = duration ? (currentTime / duration) * 100 : 0;
@@ -94,29 +95,71 @@ const usePlayer = () => {
         };
     }, []);
 
+    // Registering keyboard events
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            const video = videoRef.current;
+            if(!video) return;
+
+            // Prevent event triggering when focus is on input elements
+            const activeTag = document.activeElement.tagName.toLowerCase();
+            if(activeTag === "input" || activeTag === "textarea") return;
+
+            switch(e.code) {
+                case "Space":
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case "ArrowLeft":
+                    video.currentTime = Math.max(0, video.currentTime - 5);
+                    triggerOverlay("backward");
+                    break;
+                case "ArrowRight":
+                    video.currentTime = Math.min(video.duration, video.currentTime + 5);
+                    triggerOverlay("forward");
+                    break;
+                case "KeyF":
+                    toggleFullscreen();
+                    break;
+                case "KeyR":
+                    handleRestart();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        }
+    }, []);
+
     // toggle play/pause state
-    const togglePlay = () => {
+    function togglePlay() {
         const video = videoRef.current;
 
         if(video.paused) {
             video.play();
             setIsPlaying(true);
             setShowThumbnail(false);
+            triggerOverlay("play");
         } else {
             video.pause();
             setIsPlaying(false);
+            triggerOverlay("pause");
         }
     };
 
     // handle user seek actions
-    const handleSeek = (e) => {
+    function handleSeek(e) {
         const video = videoRef.current;
         video.currentTime = e.target.value;
         setCurrentTime(e.target.value);
     };
 
     // handling manual video quality change
-    const handleQualityChange = (e) => {
+    function handleQualityChange(e) {
         const levelIndex = Number(e.target.value);
         setSelectedLevel(levelIndex);
 
@@ -126,17 +169,18 @@ const usePlayer = () => {
     };
 
     // restart video from beginning
-    const handleRestart = () => {
+    function handleRestart() {
         const video = videoRef.current;
         video.currentTime = 0;
         setCurrentTime(0);
+        triggerOverlay("restart");
         video.play();
         setIsPlaying(true);
         setShowThumbnail(false);
     };
 
     // toggle fullscreen mode
-    const toggleFullscreen = () => {
+    function toggleFullscreen() {
         const videoContainer = videoRef.current.parentElement;
 
         if(!document.fullscreenElement) {
@@ -146,7 +190,14 @@ const usePlayer = () => {
             document.exitFullscreen();
             setIsFullscreen(false);
         }
-    }
+    };
+
+    function triggerOverlay(type) {
+        setActionOverlay(type);
+        setTimeout(() => {
+            setActionOverlay(null);
+        }, 1000);
+    };
 
     return {
         videoRef,
@@ -160,6 +211,7 @@ const usePlayer = () => {
         showThumbnail,
         isFullscreen,
         progress,
+        actionOverlay,
         togglePlay,
         handleSeek,
         handleQualityChange,

@@ -14,6 +14,7 @@ const VideoPlayer = () => {
         showThumbnail,
         isFullscreen,
         progress,
+        actionOverlay,
         togglePlay,
         handleSeek,
         handleRestart,
@@ -57,6 +58,16 @@ const VideoPlayer = () => {
         {isBuffering && (
             <div className="spinner-overlay">
             <div className="spinner"></div>
+            </div>
+        )}
+
+        {actionOverlay && (
+            <div className="action-overlay">
+                {actionOverlay === "play" && "▶"}
+                {actionOverlay === "pause" && "⏸"}
+                {actionOverlay === "backward" && "-5s"}
+                {actionOverlay === "forward" && "+5s"}
+                {actionOverlay === "restart" && "↻"}
             </div>
         )}
 
