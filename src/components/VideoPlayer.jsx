@@ -2,7 +2,6 @@ import usePlayer from '../hooks/usePlayer';
 import './VideoPlayer.css';
 
 const VideoPlayer = () => {
-
     const {
         videoRef,
         isPlaying,

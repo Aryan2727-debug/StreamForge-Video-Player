@@ -142,6 +142,9 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
+- Add keyboard controls (Space -> Play/Pause, Left Arrow -> -5s, Right Arrow -> +5s, F -> Fullscreen)
+- Add volume slider and mute toggle
+- Add analytics logging (console logs for now)
 - Add functionality to select from multiple streams  
 
 ---
