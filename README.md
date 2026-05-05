@@ -241,7 +241,6 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Add buffered progress indicator
 - Add volume slider and mute toggle
 - Add analytics logging (console logs for now)
 - Add functionality to select from multiple streams  
