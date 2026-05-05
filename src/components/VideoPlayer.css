@@ -430,6 +430,33 @@
   animation: fadeScale 0.5s ease;
 }
 
+/* Thumbnail preview on progress bar hover */
+.thumbnail-preview {
+  position: absolute;
+  bottom: 70px;
+  width: 160px;
+  height: 90px;
+  transform: translateX(-50%);
+  border-radius: 6px;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-size: auto;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+/* Time label */
+.thumbnail-time {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
 @keyframes sf-spin {
   to { transform: rotate(360deg); }
 }

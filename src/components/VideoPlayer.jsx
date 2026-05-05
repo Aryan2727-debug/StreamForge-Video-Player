@@ -15,6 +15,11 @@ const VideoPlayer = () => {
         isFullscreen,
         progress,
         actionOverlay,
+        hoverTime,
+        hoverX,
+        getThumbnailPosition,
+        handleMouseMove,
+        handleMouseLeave,
         togglePlay,
         handleSeek,
         handleRestart,
@@ -32,6 +37,9 @@ const VideoPlayer = () => {
         const seconds = Math.floor(time % 60);
         return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
+
+    // thumbnail co-ordinates
+    const { x, y } = hoverTime !== null ? getThumbnailPosition(hoverTime) : { x: 0, y: 0 };
 
     return (
         <div className="player-container">
@@ -69,6 +77,21 @@ const VideoPlayer = () => {
                 {actionOverlay === "forward" && "+5s"}
                 {actionOverlay === "restart" && "↻"}
             </div>
+        )}
+
+        {hoverTime !== null && (
+        <div
+            className="thumbnail-preview"
+            style={{
+            left: `${hoverX}px`,
+            backgroundImage: `url(/sprite/sprite.jpg)`,
+            backgroundPosition: `-${x}px -${y}px`,
+            }}
+        >
+            <div className="thumbnail-time">
+            {formatTime(hoverTime)}
+            </div>
+        </div>
         )}
 
         <div className="controls">
@@ -119,15 +142,17 @@ const VideoPlayer = () => {
 
             {/* Seek Bar */}
             <input
-            type="range"
-            className="seek-bar"
-            min="0"
-            max={duration}
-            value={currentTime}
-            onChange={handleSeek}
-            style={{
-                background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
-            }}
+                type="range"
+                className="seek-bar"
+                min="0"
+                max={duration}
+                value={currentTime}
+                onChange={handleSeek}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                    background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
+                }}
             />
 
             {/* Fullscreen Button */}

@@ -14,6 +14,14 @@ const usePlayer = () => {
     const [showThumbnail, setShowThumbnail] = useState(true); // for thumbnail poster display
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [actionOverlay, setActionOverlay] = useState(null); // for showing temporary overlays like Play/Pause, +5s/-5s
+    const [hoverTime, setHoverTime] = useState(null); // for thumbnail preview on progress bar hover
+    const [hoverX, setHoverX] = useState(0); // for positioning thumbnail preview
+
+    // Constants for Thumbnail Preview
+    const THUMB_WIDTH = 160;
+    const THUMB_HEIGHT = 90;
+    const THUMB_INTERVAL = 5; // seconds per thumbnail
+    const COLUMNS = 5; 
 
     // Progress %
     const progress = duration ? (currentTime / duration) * 100 : 0;
@@ -192,12 +200,41 @@ const usePlayer = () => {
         }
     };
 
+    // show temporary overlays for actions like play/pause, forward/backward, restart
     function triggerOverlay(type) {
         setActionOverlay(type);
         setTimeout(() => {
             setActionOverlay(null);
         }, 1000);
     };
+
+    // get thumbnail position based on hover time for progress bar thumbnail preview
+    function getThumbnailPosition(time) {
+        const index = Math.floor(time / THUMB_INTERVAL);
+        const row = Math.floor(index / COLUMNS);
+        const col = index % COLUMNS;
+
+        return {
+            x: col * THUMB_WIDTH,
+            y: row * THUMB_HEIGHT
+        };
+    };
+
+    // handle mouse move on progress bar to show thumbnail preview
+    function handleMouseMove(e) {
+        const rect = e.target.getBoundingClientRect();
+        const containerRect = videoRef.current.parentElement.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        const time = percent * duration;
+        const x = e.clientX - containerRect.left;
+        setHoverTime(time);
+        setHoverX(x);
+    };
+
+    // hide thumbnail preview when mouse leaves progress bar
+    function handleMouseLeave() {
+        setHoverTime(null);
+    }
 
     return {
         videoRef,
@@ -212,6 +249,11 @@ const usePlayer = () => {
         isFullscreen,
         progress,
         actionOverlay,
+        hoverTime,
+        hoverX,
+        getThumbnailPosition,
+        handleMouseMove,
+        handleMouseLeave,
         togglePlay,
         handleSeek,
         handleQualityChange,
