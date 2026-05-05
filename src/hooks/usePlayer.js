@@ -16,6 +16,13 @@ const usePlayer = () => {
     const [actionOverlay, setActionOverlay] = useState(null); // for showing temporary overlays like Play/Pause, +5s/-5s
     const [hoverTime, setHoverTime] = useState(null); // for thumbnail preview on progress bar hover
     const [hoverX, setHoverX] = useState(0); // for positioning thumbnail preview
+    const [currentVideo, setCurrentVideo] = useState("avengers"); // default video
+
+    // List of videos
+    const videos = [
+        { id: "sample_1920x1080", title: "Earth from Space" },
+        { id: "avengers", title: "Avengers: Endgame" }
+    ];
 
     // Constants for Thumbnail Preview
     const THUMB_WIDTH = 160;
@@ -30,11 +37,17 @@ const usePlayer = () => {
     useEffect(() => {
         const video = videoRef.current;
 
+        if (!video) return;
+
+        if (hlsRef.current) {
+            hlsRef.current.destroy();
+        }
+
         if (Hls.isSupported()) {
         const hls = new Hls();
         hlsRef.current = hls;
 
-        hls.loadSource("/hls/master.m3u8"); // use index.m3u8 if single
+        hls.loadSource(`/hls/${currentVideo}/master.m3u8`); // use index.m3u8 if single
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -60,9 +73,9 @@ const usePlayer = () => {
             hls.destroy();
         };
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = "/hls/master.m3u8";
+            video.src = `/hls/${currentVideo}/master.m3u8`;
         }
-    }, []);
+    }, [currentVideo]);
 
     // syncing UI with current video time and duration
     // handling buffering state based on video events
@@ -140,7 +153,7 @@ const usePlayer = () => {
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
-        }
+        };
     }, []);
 
     // toggle play/pause state
@@ -237,6 +250,7 @@ const usePlayer = () => {
     }
 
     return {
+        videos,
         videoRef,
         isPlaying,
         currentTime,
@@ -251,6 +265,8 @@ const usePlayer = () => {
         actionOverlay,
         hoverTime,
         hoverX,
+        currentVideo,
+        setCurrentVideo,
         getThumbnailPosition,
         handleMouseMove,
         handleMouseLeave,

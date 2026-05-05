@@ -16,6 +16,65 @@
   --sf-ease:      cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Video Selector */
+.video-selector {
+  width: 800px;
+  margin: 12px auto 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: sans-serif;
+}
+
+/* Label */
+.video-label {
+  color: #ccc;
+  font-size: 14px;
+}
+
+/* Wrapper for custom arrow */
+.select-wrapper {
+  position: relative;
+}
+
+/* Custom dropdown */
+.select-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 8px 36px 8px 12px;
+  font-size: 14px;
+  background: #111;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.select-wrapper select:hover {
+  border-color: #555;
+}
+
+/* Focus */
+.select-wrapper select:focus {
+  border-color: #3b82f6; /* blue */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Custom arrow */
+.select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #aaa;
+  pointer-events: none;
+}
+
 /* -----------------------------------------------------------
    Stage
    ----------------------------------------------------------- */

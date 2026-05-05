@@ -25,3 +25,7 @@ ffmpeg/
 *.njsproj
 *.sln
 *.sw?
+
+# Large video files (use Git LFS or external storage)
+public/videos/avengers_final.mp4
+
