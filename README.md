@@ -1,16 +1,17 @@
-# 🎬 StreamForge - HLS Video Player (Basic Setup)
+# 🎬 StreamForge - HLS Video Player (Advanced)
 
-This project is a simple React-based video player that plays HLS (HTTP Live Streaming) video using adaptive bitrate streaming.
+A custom-built React-based video player that supports HLS streaming, adaptive bitrate playback, custom controls, keyboard interactions, and thumbnail previews using sprite sheets.
 
 ---
 
 ## 🚀 What This Project Does
 
-- Converts a single video into HLS format  
-- Breaks video into small chunks (`.ts` files)  
-- Creates playlists (`.m3u8`) for streaming  
-- Plays video in browser using hls.js  
-- Supports adaptive bitrate (multiple qualities)  
+- Converts video into HLS format (adaptive bitrate)
+- Streams video using `.m3u8` playlists and `.ts` segments
+- Implements a **custom video player UI (no native controls)**
+- Supports adaptive quality switching
+- Adds keyboard shortcuts and interaction feedback
+- Displays thumbnail previews using sprite sheets
 
 ---
 
@@ -21,6 +22,104 @@ This project is a simple React-based video player that plays HLS (HTTP Live Stre
 - CSS  
 - hls.js  
 - FFmpeg  
+
+---
+
+## ✨ Features
+
+### 🎛️ Custom Player Controls
+- Fully custom UI built from scratch (no native browser controls)
+- Play / Pause toggle with animated icons
+- Restart button to replay the video from the beginning
+- Current time / total duration display (formatted as `mm:ss`)
+- Quality indicator showing the currently active resolution
+- Quality selector dropdown (Auto + all available HLS levels)
+- Custom seek bar with live progress fill (gradient-based)
+- Fullscreen toggle with dynamic enter/exit icons
+
+### 📡 Adaptive Bitrate Streaming (HLS)
+- Streams video using `hls.js` and `.m3u8` playlists
+- Automatically picks the best quality based on network conditions
+- Supports manual quality override via the quality selector
+- Tracks `LEVEL_SWITCHED` events to keep the UI in sync
+- Native HLS fallback for Safari (`application/vnd.apple.mpegurl`)
+- Graceful HLS error logging
+
+### ⌨️ Keyboard Shortcuts
+- `Space` — Play / Pause
+- `ArrowLeft` — Seek backward 5 seconds
+- `ArrowRight` — Seek forward 5 seconds
+- `F` — Toggle fullscreen
+- `R` — Restart video
+- Shortcuts are disabled while typing in input/textarea fields
+
+### 🎬 Playback Feedback Overlays
+- Temporary action overlays for Play, Pause, +5s, -5s, and Restart
+- Buffering spinner overlay shown during `waiting` / `stalled` events
+- Poster thumbnail with a center play button before playback starts
+
+### 🖼️ Thumbnail Preview on Hover
+- Sprite-sheet based thumbnail preview while hovering the seek bar
+- Hover position dynamically calculated and clamped within the player
+- Hovered timestamp displayed under the preview image
+
+### 🖥️ Fullscreen Support
+- Native Fullscreen API integration
+- Listens to `fullscreenchange` to keep UI state consistent
+- Icon and behavior update automatically on enter/exit
+
+### 🧹 Lifecycle & Cleanup
+- HLS instance is properly destroyed on unmount
+- All video and document event listeners are cleaned up
+- Refs (`videoRef`, `hlsRef`) used to avoid unnecessary re-renders
+
+---
+
+## 🖼️ Thumbnail Integration (Sprite Sheet Approach)
+
+StreamForge uses a **sprite sheet** to display thumbnail previews when the user hovers over the seek bar. Instead of loading dozens of individual images at runtime, all thumbnails are packed into a single image, and the correct frame is shown by shifting `background-position` in CSS.
+
+### 🔧 How It Works
+
+1. Frames are extracted from the source video at a fixed interval (1 frame every 5 seconds).
+2. All extracted frames are tiled into a single sprite image (5 columns × 4 rows).
+3. On hover over the seek bar, the player computes which thumbnail corresponds to the hovered timestamp:
+   - `index = floor(hoverTime / THUMB_INTERVAL)`
+   - `row = floor(index / COLUMNS)`
+   - `col = index % COLUMNS`
+   - `x = col * THUMB_WIDTH`, `y = row * THUMB_HEIGHT`
+4. The thumbnail tile is rendered using `background-image` + `background-position` from `/sprite/sprite.jpg`.
+
+### 📐 Sprite Configuration
+
+| Property | Value |
+| --- | --- |
+| Thumbnail width | `160px` |
+| Thumbnail height | `90px` |
+| Interval per thumbnail | `5s` |
+| Grid layout | `5 columns × 4 rows` |
+| Sprite path | `/public/sprite/sprite.jpg` |
+
+### 🛠️ FFmpeg Commands Used
+
+**Step 1 — Extract individual thumbnails (1 every 5 seconds, scaled to 160×90):**
+
+```bash
+ffmpeg -i public/videos/sample_1920x1080.mp4 -vf "fps=1/5,scale=160:90" thumbnails/thumb_%03d.jpg
+```
+
+**Step 2 — Combine extracted thumbnails into a single 5×4 sprite sheet:**
+
+```bash
+ffmpeg -i thumbnails/thumb_%03d.jpg -vf "tile=5x4" public/sprite/sprite.jpg
+```
+
+### ✅ Why Sprite Sheets?
+
+- **One HTTP request** instead of N image fetches
+- **Instant** preview rendering on hover (no flicker / loading delay)
+- **Lightweight** — a single optimized JPEG vs. many small files
+- **Simple math** to map a timestamp to a tile position
 
 ---
 
@@ -147,11 +246,3 @@ hls.loadSource("/hls/master.m3u8");
 - Add functionality to select from multiple streams  
 
 ---
-
-## 💡 Summary
-
-This project demonstrates how modern video streaming works:
-
-- Video is split into segments  
-- Playlists control playback  
-- Player dynamically adjusts quality  
