@@ -19,6 +19,10 @@ const VideoPlayer = () => {
         hoverTime,
         hoverX,
         currentVideo,
+        volume,
+        isMuted,
+        toggleMute,
+        handleVolumeChange,
         setCurrentVideo,
         getThumbnailPosition,
         handleMouseMove,
@@ -71,17 +75,17 @@ const VideoPlayer = () => {
                 {/* Poster Thumbnail */}
                 {showThumbnail && (
                     <div className="poster-overlay" onClick={togglePlay}>
-                    <img
-                        src={`main-thumbnail/${currentVideo}/thumbnail.png`}
-                        alt="thumbnail"
-                        className="poster-image"
-                    />
+                        <img
+                            src={`main-thumbnail/${currentVideo}/thumbnail.png`}
+                            alt="thumbnail"
+                            className="poster-image"
+                        />
 
-                    <div className="center-play-btn">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
-                        <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                    </div>
+                        <div className="center-play-btn">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
+                                <polygon points="5,3 19,12 5,21" />
+                            </svg>
+                        </div>
                     </div>
                 )}
 
@@ -103,35 +107,35 @@ const VideoPlayer = () => {
                 )}
 
                 {hoverTime !== null && (
-                <div
-                    className="thumbnail-preview"
-                    style={{
-                    left: `${hoverX}px`,
-                    backgroundImage: `url(/sprite/${currentVideo}/sprite.jpg)`,
-                    backgroundPosition: `-${x}px -${y}px`,
-                    }}
-                >
-                    <div className="thumbnail-time">
-                    {formatTime(hoverTime)}
+                    <div
+                        className="thumbnail-preview"
+                        style={{
+                            left: `${hoverX}px`,
+                            backgroundImage: `url(/sprite/${currentVideo}/sprite.jpg)`,
+                            backgroundPosition: `-${x}px -${y}px`,
+                        }}
+                    >
+                        <div className="thumbnail-time">
+                            {formatTime(hoverTime)}
+                        </div>
                     </div>
-                </div>
                 )}
 
                 <div className="controls">
                     {/* Play / Pause */}
                     <button className="play-btn" onClick={togglePlay}>
-                    {isPlaying ? (
-                        // Pause Icon
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <rect x="6" y="5" width="4" height="14" />
-                        <rect x="14" y="5" width="4" height="14" />
-                        </svg>
-                    ) : (
-                        // Play Icon
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                    )}
+                        {isPlaying ? (
+                            // Pause Icon
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <rect x="6" y="5" width="4" height="14" />
+                            <rect x="14" y="5" width="4" height="14" />
+                            </svg>
+                        ) : (
+                            // Play Icon
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <polygon points="5,3 19,12 5,21" />
+                            </svg>
+                        )}
                     </button>
 
                     {/* Restart Button */}
@@ -141,26 +145,51 @@ const VideoPlayer = () => {
 
                     {/* Current Time / Duration Display */}
                     <span className="time">
-                    {formatTime(currentTime)} / {formatTime(duration)}
+                        {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
+
+                    {/* Volume Controls */}
+                    <div className="volume-controls">
+                        {/* Mute Button */}
+                        <button
+                            className="control-btn"
+                            onClick={toggleMute}
+                        >
+                            {isMuted || volume === 0 ? "🔇" : "🔊"}
+                        </button>
+
+                        {/* Volume Slider */}
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={isMuted ? 0 : volume}
+                            onChange={handleVolumeChange}
+                            className="volume-slider"
+                            style={{
+                                "--volume-percent": volume * 100,
+                            }}
+                        />
+                    </div>
 
                     {/* Quality */}
                     <span className="quality">{quality}</span>
 
                     {/* Quality Selector */}
                     <select
-                    className="quality-selector"
-                    value={selectedLevel}
-                    onChange={handleQualityChange}
+                        className="quality-selector"
+                        value={selectedLevel}
+                        onChange={handleQualityChange}
                     >
-                    <option value={-1}>Auto</option>
-                    {levels.map(function (level, index) {
-                        return (
-                        <option key={index} value={index}>
-                            {level.height}p
-                        </option>
-                        );
-                    })}
+                        <option value={-1}>Auto</option>
+                        {levels.map(function (level, index) {
+                            return (
+                            <option key={index} value={index}>
+                                {level.height}p
+                            </option>
+                            );
+                        })}
                     </select>
 
                     {/* Seek Bar */}

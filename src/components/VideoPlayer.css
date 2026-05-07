@@ -230,6 +230,51 @@
 }
 
 /* -----------------------------------------------------------
+   Volume controls
+   ----------------------------------------------------------- */
+.volume-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Volume slider */
+.volume-slider {
+  width: 90px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 5px;
+  background: #444;
+  outline: none;
+}
+
+/* Blue fill effect */
+.volume-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 5px;
+  background: linear-gradient(
+    to right,
+    #3b82f6 0%,
+    #3b82f6 calc(var(--volume-percent, 100%) * 1%),
+    #444 calc(var(--volume-percent, 100%) * 1%),
+    #444 100%
+  );
+}
+
+/* Thumb */
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  margin-top: -5px;
+  cursor: pointer;
+}
+
+/* -----------------------------------------------------------
    Quality label (live readout)
    ----------------------------------------------------------- */
 .quality {

@@ -17,6 +17,8 @@ const usePlayer = () => {
     const [hoverTime, setHoverTime] = useState(null); // for thumbnail preview on progress bar hover
     const [hoverX, setHoverX] = useState(0); // for positioning thumbnail preview
     const [currentVideo, setCurrentVideo] = useState("avengers"); // default video
+    const [volume, setVolume] = useState(1); // for volume controls
+    const [isMuted, setIsMuted] = useState(false); // for mute/unmute state
 
     // List of videos
     const videos = [
@@ -247,7 +249,28 @@ const usePlayer = () => {
     // hide thumbnail preview when mouse leaves progress bar
     function handleMouseLeave() {
         setHoverTime(null);
-    }
+    };
+
+    function handleVolumeChange(e) {
+        const video = videoRef.current;
+        const newVolume = parseFloat(e.target.value);
+        video.volume = newVolume;
+        setVolume(newVolume);
+
+        if(newVolume === 0) {
+            video.muted = true;
+            setIsMuted(true);
+        } else {
+            video.muted = false;
+            setIsMuted(false);
+        }
+    };
+
+    function toggleMute() {
+        const video = videoRef.current;
+        video.muted = !video.muted;
+        setIsMuted(video.muted);
+    };
 
     return {
         videos,
@@ -266,6 +289,10 @@ const usePlayer = () => {
         hoverTime,
         hoverX,
         currentVideo,
+        volume,
+        isMuted,
+        toggleMute,
+        handleVolumeChange,
         setCurrentVideo,
         getThumbnailPosition,
         handleMouseMove,
