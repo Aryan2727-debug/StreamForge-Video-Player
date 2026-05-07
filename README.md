@@ -36,6 +36,7 @@ A custom-built React-based video player that supports HLS streaming, adaptive bi
 - Quality selector dropdown (Auto + all available HLS levels)
 - Custom seek bar with live progress fill (gradient-based)
 - Fullscreen toggle with dynamic enter/exit icons
+- Volume slider with mute toggle
 
 ### 📡 Adaptive Bitrate Streaming (HLS)
 - Streams video using `hls.js` and `.m3u8` playlists
