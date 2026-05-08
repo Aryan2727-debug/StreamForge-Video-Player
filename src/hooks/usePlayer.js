@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import playerConfig from "../config/playerConfig";
 import Hls from "hls.js";
+import { trackEvent } from "../services/analytics";
 
 const usePlayer = () => {
     const videoRef = useRef(null);
@@ -128,10 +129,12 @@ const usePlayer = () => {
                 case "ArrowLeft":
                     video.currentTime = Math.max(0, video.currentTime - 5);
                     triggerOverlay("backward");
+                    trackEvent("seek_backward", { video: currentVideo, seconds: 5 });
                     break;
                 case "ArrowRight":
                     video.currentTime = Math.min(video.duration, video.currentTime + 5);
                     triggerOverlay("forward");
+                    trackEvent("seek_forward", { video: currentVideo, seconds: 5 });
                     break;
                 case "KeyF":
                     toggleFullscreen();
@@ -159,10 +162,12 @@ const usePlayer = () => {
             setIsPlaying(true);
             setShowThumbnail(false);
             triggerOverlay("play");
+            trackEvent("play", { video: currentVideo, currentTime: video.currentTime });
         } else {
             video.pause();
             setIsPlaying(false);
             triggerOverlay("pause");
+            trackEvent("pause", { video: currentVideo, currentTime: video.currentTime });
         }
     };
 
@@ -171,6 +176,7 @@ const usePlayer = () => {
         const video = videoRef.current;
         video.currentTime = e.target.value;
         setCurrentTime(e.target.value);
+        trackEvent("seek", { video: currentVideo, seekTime: e.target.value });
     };
 
     // handling manual video quality change
@@ -181,6 +187,7 @@ const usePlayer = () => {
         if(hlsRef.current) {
             hlsRef.current.currentLevel = levelIndex;
         }
+        trackEvent("quality_change", { video: currentVideo, quality: levelIndex });
     };
 
     // restart video from beginning
@@ -192,6 +199,7 @@ const usePlayer = () => {
         video.play();
         setIsPlaying(true);
         setShowThumbnail(false);
+        trackEvent("restart", { video: currentVideo });
     };
 
     // toggle fullscreen mode
@@ -201,9 +209,11 @@ const usePlayer = () => {
         if(!document.fullscreenElement) {
             videoContainer.requestFullscreen();
             setIsFullscreen(true);
+            trackEvent("enter_fullscreen", { video: currentVideo });
         } else {
             document.exitFullscreen();
             setIsFullscreen(false);
+            trackEvent("exit_fullscreen", { video: currentVideo });
         }
     };
 
@@ -213,6 +223,7 @@ const usePlayer = () => {
         setTimeout(() => {
             setActionOverlay(null);
         }, 1000);
+        trackEvent("action_overlay", { video: currentVideo, action: type });
     };
 
     // get thumbnail position based on hover time for progress bar thumbnail preview
@@ -256,12 +267,14 @@ const usePlayer = () => {
             video.muted = false;
             setIsMuted(false);
         }
+        trackEvent("volume_change", { video: currentVideo, volume: newVolume });
     };
 
     function toggleMute() {
         const video = videoRef.current;
         video.muted = !video.muted;
         setIsMuted(video.muted);
+        trackEvent(video.muted ? "mute" : "unmute", { video: currentVideo });
     };
 
     return {
