@@ -243,7 +243,6 @@ hls.loadSource("/hls/master.m3u8");
 ## 🚀 Next Steps
 
 - Add analytics logging (console logs for now)
-- Remove hardcodings (THUMB_WIDTH etc.). Create a playerConfig.json file
 - Create ARCHITECTURE.md file (Explain: HLS flow, Sprite system, Player architecture, Hook responsibilities, Buffering system, Quality switching, Thumbnail mapping)
 - Integrate Ad Insertion (1 Ad after every 30 seconds)
 

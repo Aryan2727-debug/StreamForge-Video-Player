@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import playerConfig from "../config/playerConfig";
 import Hls from "hls.js";
 
 const usePlayer = () => {
@@ -21,16 +22,7 @@ const usePlayer = () => {
     const [isMuted, setIsMuted] = useState(false); // for mute/unmute state
 
     // List of videos
-    const videos = [
-        { id: "sample_1920x1080", title: "Earth from Space" },
-        { id: "avengers", title: "Avengers: Endgame" }
-    ];
-
-    // Constants for Thumbnail Preview
-    const THUMB_WIDTH = 160;
-    const THUMB_HEIGHT = 90;
-    const THUMB_INTERVAL = 5; // seconds per thumbnail
-    const COLUMNS = 5; 
+    const videos = playerConfig.videos;
 
     // Progress %
     const progress = duration ? (currentTime / duration) * 100 : 0;
@@ -225,13 +217,13 @@ const usePlayer = () => {
 
     // get thumbnail position based on hover time for progress bar thumbnail preview
     function getThumbnailPosition(time) {
-        const index = Math.floor(time / THUMB_INTERVAL);
-        const row = Math.floor(index / COLUMNS);
-        const col = index % COLUMNS;
+        const index = Math.floor(time / playerConfig.thumbnailConfig.THUMB_INTERVAL);
+        const row = Math.floor(index / playerConfig.thumbnailConfig.COLUMNS);
+        const col = index % playerConfig.thumbnailConfig.COLUMNS;
 
         return {
-            x: col * THUMB_WIDTH,
-            y: row * THUMB_HEIGHT
+            x: col * playerConfig.thumbnailConfig.THUMB_WIDTH,
+            y: row * playerConfig.thumbnailConfig.THUMB_HEIGHT
         };
     };
 
