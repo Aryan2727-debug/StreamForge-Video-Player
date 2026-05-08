@@ -69,6 +69,12 @@ A custom-built React-based video player that supports HLS streaming, adaptive bi
 - Listens to `fullscreenchange` to keep UI state consistent
 - Icon and behavior update automatically on enter/exit
 
+### 📊 Analytics Integration
+- Lightweight event tracking via `analytics.js` service
+- Tracks all user interactions: play, pause, seek, quality change, restart, fullscreen, volume, mute
+- Each event is logged as a structured JSON object with `event`, `timestamp`, and contextual payload
+- Easily extensible — swap `console.log` for a `fetch()` call to send events to a backend
+
 ### 🧹 Lifecycle & Cleanup
 - HLS instance is properly destroyed on unmount
 - All video and document event listeners are cleaned up
@@ -242,7 +248,6 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Create ARCHITECTURE.md file (Explain: HLS flow, Sprite system, Player architecture, Hook responsibilities, Buffering system, Quality switching, Thumbnail mapping)
-- Integrate Ad Insertion (1 Ad after every 30 seconds)
+- Integrate Ad Insertion (with Node.js server) (1 Ad after every 30 seconds)
 
 ---
