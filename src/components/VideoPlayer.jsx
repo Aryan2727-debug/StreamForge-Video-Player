@@ -1,4 +1,14 @@
 import usePlayer from '../hooks/usePlayer';
+import SeekBar from './SeekBar';
+import QualitySelector from './QualitySelector';
+import FullScreenButton from './FullScreenButton';
+import VolumeControls from './VolumeControls';
+import PlayPauseButtons from './PlayPauseButtons';
+import ThumbnailPreview from './ThumbnailPreview';
+import ActionOverlay from './ActionOverlay';
+import BufferingSpinner from './BufferingSpinner';
+import PosterThumbnail from './PosterThumbnail';
+import VideoSelector from './VideoSelector';
 import './VideoPlayer.css';
 
 const VideoPlayer = () => {
@@ -51,93 +61,46 @@ const VideoPlayer = () => {
     return (
         <>
             {/* Video Selector */}
-            <div className="video-selector">
-                <label className="video-label">Select Video</label>
-
-                <div className="select-wrapper">
-                    <select
-                        value={currentVideo}
-                        onChange={(e) => setCurrentVideo(e.target.value)}
-                    >
-                    {videos.map((v) => (
-                        <option key={v.id} value={v.id}>
-                            {v.title}
-                        </option>
-                    ))}
-                    </select>
-                </div>
-            </div>
-
+            <VideoSelector 
+                videos={videos}
+                currentVideo={currentVideo}
+                setCurrentVideo={setCurrentVideo}
+            />
+            
             {/* Media Player */}
             <div className="player-container">
                 <video ref={videoRef} className="video" />
 
                 {/* Poster Thumbnail */}
-                {showThumbnail && (
-                    <div className="poster-overlay" onClick={togglePlay}>
-                        <img
-                            src={`main-thumbnail/${currentVideo}/thumbnail.png`}
-                            alt="thumbnail"
-                            className="poster-image"
-                        />
-
-                        <div className="center-play-btn">
-                            <svg width="60" height="60" viewBox="0 0 24 24" fill="white">
-                                <polygon points="5,3 19,12 5,21" />
-                            </svg>
-                        </div>
-                    </div>
-                )}
+                <PosterThumbnail 
+                    showThumbnail={showThumbnail}
+                    togglePlay={togglePlay}
+                    currentVideo={currentVideo}
+                />
 
                 {/* Buffering Spinner */}
-                {isBuffering && (
-                    <div className="spinner-overlay">
-                    <div className="spinner"></div>
-                    </div>
-                )}
+                <BufferingSpinner isBuffering={isBuffering} />
 
-                {actionOverlay && (
-                    <div className="action-overlay">
-                        {actionOverlay === "play" && "▶"}
-                        {actionOverlay === "pause" && "⏸"}
-                        {actionOverlay === "backward" && "-5s"}
-                        {actionOverlay === "forward" && "+5s"}
-                        {actionOverlay === "restart" && "↻"}
-                    </div>
-                )}
+                {/* Action Overlay */}
+                <ActionOverlay actionOverlay={actionOverlay} />
 
-                {hoverTime !== null && (
-                    <div
-                        className="thumbnail-preview"
-                        style={{
-                            left: `${hoverX}px`,
-                            backgroundImage: `url(/sprite/${currentVideo}/sprite.jpg)`,
-                            backgroundPosition: `-${x}px -${y}px`,
-                        }}
-                    >
-                        <div className="thumbnail-time">
-                            {formatTime(hoverTime)}
-                        </div>
-                    </div>
-                )}
+                {/* Thumbnail Preview */}
+                <ThumbnailPreview 
+                    hoverTime={hoverTime}
+                    hoverX={hoverX}
+                    currentVideo={currentVideo}
+                    x={x}
+                    y={y}
+                    formatTime={formatTime}
+                />
 
                 <div className="controls">
-                    {/* Play / Pause */}
-                    <button className="play-btn" onClick={togglePlay}>
-                        {isPlaying ? (
-                            // Pause Icon
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                            <rect x="6" y="5" width="4" height="14" />
-                            <rect x="14" y="5" width="4" height="14" />
-                            </svg>
-                        ) : (
-                            // Play Icon
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                            <polygon points="5,3 19,12 5,21" />
-                            </svg>
-                        )}
-                    </button>
-
+                    {/* Play / Pause Buttons */}
+                    <PlayPauseButtons 
+                        isPlaying={isPlaying}
+                        togglePlay={togglePlay}
+                    />
+                    
                     {/* Restart Button */}
                     <button className="restart-btn" onClick={handleRestart}>
                         ↻
@@ -149,78 +112,36 @@ const VideoPlayer = () => {
                     </span>
 
                     {/* Volume Controls */}
-                    <div className="volume-controls">
-                        {/* Mute Button */}
-                        <button
-                            className="control-btn"
-                            onClick={toggleMute}
-                        >
-                            {isMuted || volume === 0 ? "🔇" : "🔊"}
-                        </button>
-
-                        {/* Volume Slider */}
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={isMuted ? 0 : volume}
-                            onChange={handleVolumeChange}
-                            className="volume-slider"
-                            style={{
-                                "--volume-percent": volume * 100,
-                            }}
-                        />
-                    </div>
-
-                    {/* Quality */}
-                    <span className="quality">{quality}</span>
-
-                    {/* Quality Selector */}
-                    <select
-                        className="quality-selector"
-                        value={selectedLevel}
-                        onChange={handleQualityChange}
-                    >
-                        <option value={-1}>Auto</option>
-                        {levels.map(function (level, index) {
-                            return (
-                            <option key={index} value={index}>
-                                {level.height}p
-                            </option>
-                            );
-                        })}
-                    </select>
-
-                    {/* Seek Bar */}
-                    <input
-                        type="range"
-                        className="seek-bar"
-                        min="0"
-                        max={duration}
-                        value={currentTime}
-                        onChange={handleSeek}
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                            background: `linear-gradient(to right, blue ${progress}%, #ccc ${progress}%)`,
-                        }}
+                    <VolumeControls 
+                        isMuted={isMuted}
+                        volume={volume}
+                        toggleMute={toggleMute}
+                        handleVolumeChange={handleVolumeChange}
                     />
-
+                    
+                    {/* Quality Display and Quality Selector */}
+                    <QualitySelector 
+                        quality={quality}
+                        selectedLevel={selectedLevel}
+                        handleQualityChange={handleQualityChange}
+                        levels={levels}
+                    />
+                    
+                    {/* Seek Bar */}
+                    <SeekBar 
+                        duration={duration}
+                        currentTime={currentTime}
+                        handleSeek={handleSeek}
+                        handleMouseMove={handleMouseMove}
+                        handleMouseLeave={handleMouseLeave}
+                        progress={progress}
+                    />
+                    
                     {/* Fullscreen Button */}
-                    <button className="fullscreen-btn" onClick={toggleFullscreen}>
-                        {isFullscreen ? (
-                            // Exit fullscreen icon
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                            <path d="M6 16h2v2h2v2H6v-4zm8 0h4v4h-4v-2h2v-2h-2v-2zm-8-8V4h4v2H8v2H6zm10 0V6h-2V4h4v4h-2z" />
-                            </svg>
-                        ) : (
-                            // Enter fullscreen icon
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                            <path d="M7 14H5v5h5v-2H7v-3zm12 5v-5h-2v3h-3v2h5zM7 7h3V5H5v5h2V7zm10 3h2V5h-5v2h3v3z" />
-                            </svg>
-                        )}
-                    </button>
+                    <FullScreenButton 
+                        isFullscreen={isFullscreen}
+                        toggleFullscreen={toggleFullscreen}
+                    />
                 </div>
         </div>
         </>
