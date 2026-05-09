@@ -248,6 +248,6 @@ hls.loadSource("/hls/master.m3u8");
 
 ## 🚀 Next Steps
 
-- Integrate Ad Insertion (with Node.js server) (1 Ad after every 30 seconds)
+- Integrate Ad Insertion (with Node.js server) (1 Ad after every 20 seconds)
 
 ---
