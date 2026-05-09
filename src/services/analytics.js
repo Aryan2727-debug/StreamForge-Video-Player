@@ -4,5 +4,5 @@ export const trackEvent = (eventName, payload = {}) => {
         timestamp: new Date().toISOString(),
         ...payload
     };
-    console.log("📊 Analytics Event:", analyticsEvent)
+    console.log("📊 Client Analytics Event:", analyticsEvent)
 };

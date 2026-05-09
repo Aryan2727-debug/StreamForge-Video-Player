@@ -21,6 +21,7 @@ const usePlayer = () => {
     const [currentVideo, setCurrentVideo] = useState("avengers"); // default video
     const [volume, setVolume] = useState(1); // for volume controls
     const [isMuted, setIsMuted] = useState(false); // for mute/unmute state
+    const [isAdPlaying, setIsAdPlaying] = useState(false); // to track if currently playing an ad
 
     // List of videos
     const videos = playerConfig.videos;
@@ -39,10 +40,16 @@ const usePlayer = () => {
         }
 
         if (Hls.isSupported()) {
-        const hls = new Hls();
+        const hls = new Hls({
+            maxBufferHole: 2,
+            highBufferWatchdogPeriod: 2,
+            nudgeOffset: 0.1,
+            nudgeMaxRetry: 10,
+            backBufferLength: 90
+        });
         hlsRef.current = hls;
 
-        hls.loadSource(`/hls/${currentVideo}/master.m3u8`); // use index.m3u8 if single
+        hls.loadSource(`http://localhost:3001/api/manifest/${currentVideo}/master.m3u8`);
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -296,6 +303,8 @@ const usePlayer = () => {
         currentVideo,
         volume,
         isMuted,
+        isAdPlaying,
+        setIsAdPlaying,
         toggleMute,
         handleVolumeChange,
         setCurrentVideo,
