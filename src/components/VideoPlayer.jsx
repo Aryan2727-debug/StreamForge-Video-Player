@@ -31,6 +31,7 @@ const VideoPlayer = () => {
         currentVideo,
         volume,
         isMuted,
+        isDAIEnabled,
         toggleMute,
         handleVolumeChange,
         setCurrentVideo,
@@ -42,6 +43,7 @@ const VideoPlayer = () => {
         handleRestart,
         handleQualityChange,
         toggleFullscreen,
+        toggleDAI
     } = usePlayer();
 
     // format time in mm:ss for display
@@ -126,6 +128,18 @@ const VideoPlayer = () => {
                         handleQualityChange={handleQualityChange}
                         levels={levels}
                     />
+
+                    {/* DAI Feature Toggle Button */}
+                    <button
+                        className={`dai-toggle ${
+                            isDAIEnabled ? "enabled" : ""
+                        }`}
+                        onClick={toggleDAI}
+                    >
+                        {isDAIEnabled
+                            ? "DAI/SSAI: ON"
+                            : "DAI/SSAI: OFF"}
+                    </button>
                     
                     {/* Seek Bar */}
                     <SeekBar 

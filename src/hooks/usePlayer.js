@@ -20,6 +20,7 @@ const usePlayer = () => {
     const [hoverX, setHoverX] = useState(0); // for positioning thumbnail preview
     const [currentVideo, setCurrentVideo] = useState("avengers"); // default video
     const [volume, setVolume] = useState(1); // for volume controls
+    const [isDAIEnabled, setIsDAIEnabled] = useState(playerConfig.dai.enabled); // for DAI ad integration
     const [isMuted, setIsMuted] = useState(false); // for mute/unmute state
     const [isAdPlaying, setIsAdPlaying] = useState(false); // to track if currently playing an ad
 
@@ -49,7 +50,10 @@ const usePlayer = () => {
         });
         hlsRef.current = hls;
 
-        hls.loadSource(`http://localhost:3001/api/manifest/${currentVideo}/master.m3u8`);
+        const manifestUrl = isDAIEnabled
+            ? `http://localhost:3001/api/manifest/${currentVideo}/master.m3u8`
+            : `/hls/${currentVideo}/master.m3u8`;
+        hls.loadSource(manifestUrl);
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -77,7 +81,7 @@ const usePlayer = () => {
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
             video.src = `/hls/${currentVideo}/master.m3u8`;
         }
-    }, [currentVideo]);
+    }, [currentVideo, isDAIEnabled]);
 
     // syncing UI with current video time and duration
     // handling buffering state based on video events
@@ -284,6 +288,22 @@ const usePlayer = () => {
         trackEvent(video.muted ? "mute" : "unmute", { video: currentVideo });
     };
 
+    function toggleDAI() {
+        setIsDAIEnabled(prev => {
+            const next = !prev;
+            trackEvent(
+                next
+                    ? "dai_enabled"
+                    : "dai_disabled",
+                {
+                    video: currentVideo
+                }
+            );
+
+        return next;
+        });
+    }
+
     return {
         videos,
         videoRef,
@@ -303,6 +323,7 @@ const usePlayer = () => {
         currentVideo,
         volume,
         isMuted,
+        isDAIEnabled,
         isAdPlaying,
         setIsAdPlaying,
         toggleMute,
@@ -315,7 +336,8 @@ const usePlayer = () => {
         handleSeek,
         handleQualityChange,
         handleRestart,
-        toggleFullscreen
+        toggleFullscreen,
+        toggleDAI
     };
 }
 
