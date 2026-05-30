@@ -58,20 +58,26 @@ Instead of the player requesting ads separately, the backend dynamically modifie
 
 The player receives a single HLS playlist and treats ads as part of the video stream.
 
-## Architecture
+### Architecture
 
 Frontend Player
 ↓
+<br />
 Playback Request
 ↓
+<br />
 Node.js + Express DAI Backend
 ↓
+<br />
 Manifest Manipulation
 ↓
+<br />
 Ad Injection
 ↓
+<br />
 Modified HLS Manifest
 ↓
+<br />
 hls.js Playback
 
 ## Current V1 Capabilities
