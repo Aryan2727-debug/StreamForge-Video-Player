@@ -20,7 +20,9 @@ const usePlayer = () => {
     const [hoverX, setHoverX] = useState(0); // for positioning thumbnail preview
     const [currentVideo, setCurrentVideo] = useState("avengers"); // default video
     const [volume, setVolume] = useState(1); // for volume controls
+    const [isDAIEnabled, setIsDAIEnabled] = useState(playerConfig.dai.enabled); // for DAI ad integration
     const [isMuted, setIsMuted] = useState(false); // for mute/unmute state
+    const [isAdPlaying, setIsAdPlaying] = useState(false); // to track if currently playing an ad
 
     // List of videos
     const videos = playerConfig.videos;
@@ -39,10 +41,19 @@ const usePlayer = () => {
         }
 
         if (Hls.isSupported()) {
-        const hls = new Hls();
+        const hls = new Hls({
+            maxBufferHole: 2,
+            highBufferWatchdogPeriod: 2,
+            nudgeOffset: 0.1,
+            nudgeMaxRetry: 10,
+            backBufferLength: 90
+        });
         hlsRef.current = hls;
 
-        hls.loadSource(`/hls/${currentVideo}/master.m3u8`); // use index.m3u8 if single
+        const manifestUrl = isDAIEnabled
+            ? `http://localhost:3001/api/manifest/${currentVideo}/master.m3u8`
+            : `/hls/${currentVideo}/master.m3u8`;
+        hls.loadSource(manifestUrl);
         hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -70,7 +81,7 @@ const usePlayer = () => {
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
             video.src = `/hls/${currentVideo}/master.m3u8`;
         }
-    }, [currentVideo]);
+    }, [currentVideo, isDAIEnabled]);
 
     // syncing UI with current video time and duration
     // handling buffering state based on video events
@@ -277,6 +288,22 @@ const usePlayer = () => {
         trackEvent(video.muted ? "mute" : "unmute", { video: currentVideo });
     };
 
+    function toggleDAI() {
+        setIsDAIEnabled(prev => {
+            const next = !prev;
+            trackEvent(
+                next
+                    ? "dai_enabled"
+                    : "dai_disabled",
+                {
+                    video: currentVideo
+                }
+            );
+
+        return next;
+        });
+    }
+
     return {
         videos,
         videoRef,
@@ -296,6 +323,9 @@ const usePlayer = () => {
         currentVideo,
         volume,
         isMuted,
+        isDAIEnabled,
+        isAdPlaying,
+        setIsAdPlaying,
         toggleMute,
         handleVolumeChange,
         setCurrentVideo,
@@ -306,7 +336,8 @@ const usePlayer = () => {
         handleSeek,
         handleQualityChange,
         handleRestart,
-        toggleFullscreen
+        toggleFullscreen,
+        toggleDAI
     };
 }
 

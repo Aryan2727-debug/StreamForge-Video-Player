@@ -3,6 +3,9 @@ const playerConfig = {
         { id: "sample_1920x1080", title: "Earth from Space" },
         { id: "avengers", title: "Avengers: Endgame" }
     ],
+    dai: {
+        enabled: false
+    },
     thumbnailConfig: {
         THUMB_WIDTH: 160,
         THUMB_HEIGHT: 90,
