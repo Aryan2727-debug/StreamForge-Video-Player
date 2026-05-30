@@ -10,6 +10,9 @@ A custom-built React-based video player that supports HLS streaming, adaptive bi
 - Streams video using `.m3u8` playlists and `.ts` segments
 - Implements a **custom video player UI (no native controls)**
 - Supports adaptive quality switching
+- Supports optional **Server-Side Ad Insertion (SSAI / DAI)**
+- Dynamically stitches ad segments into HLS manifests
+- Supports feature-flag based SSAI enable/disable
 - Adds keyboard shortcuts and interaction feedback
 - Displays thumbnail previews using sprite sheets
 
@@ -19,6 +22,8 @@ A custom-built React-based video player that supports HLS streaming, adaptive bi
 
 - React (Vite)  
 - JavaScript  
+- Node.js
+- Express
 - CSS  
 - hls.js  
 - FFmpeg  
@@ -46,13 +51,38 @@ A custom-built React-based video player that supports HLS streaming, adaptive bi
 - Native HLS fallback for Safari (`application/vnd.apple.mpegurl`)
 - Graceful HLS error logging
 
-### ⌨️ Keyboard Shortcuts
-- `Space` — Play / Pause
-- `ArrowLeft` — Seek backward 5 seconds
-- `ArrowRight` — Seek forward 5 seconds
-- `F` — Toggle fullscreen
-- `R` — Restart video
-- Shortcuts are disabled while typing in input/textarea fields
+### 📺 Server-Side Ad Insertion (SSAI / DAI)
+StreamForge supports optional Server-Side Ad Insertion (SSAI), also known as Dynamic Ad Insertion (DAI).
+
+Instead of the player requesting ads separately, the backend dynamically modifies HLS manifests and stitches ad segments directly into the content stream.
+
+The player receives a single HLS playlist and treats ads as part of the video stream.
+
+## Architecture
+
+Frontend Player
+↓
+Playback Request
+↓
+Node.js + Express DAI Backend
+↓
+Manifest Manipulation
+↓
+Ad Injection
+↓
+Modified HLS Manifest
+↓
+hls.js Playback
+
+## Current V1 Capabilities
+
+- Mid-roll ad insertion
+- Manifest-level ad stitching
+- Duration-based ad scheduling
+- HLS discontinuity handling
+- Ad break signaling
+- Analytics tracking
+- Feature-flag controlled enable/disable
 
 ### 🎬 Playback Feedback Overlays
 - Temporary action overlays for Play, Pause, +5s, -5s, and Restart
@@ -243,11 +273,5 @@ hls.loadSource("/hls/master.m3u8");
 - index.m3u8 is not needed (single quality only)  
 - Always use master.m3u8 for adaptive streaming  
 - Keep HLS files inside public/  
-
----
-
-## 🚀 Next Steps
-
-- Integrate Ad Insertion (with Node.js server) (1 Ad after every 20 seconds)
 
 ---
