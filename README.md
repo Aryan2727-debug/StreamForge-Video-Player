@@ -61,26 +61,32 @@ The player receives a single HLS playlist and treats ads as part of the video st
 ### Architecture
 
 Frontend Player
+<br />
 ↓
 <br />
 Playback Request
+<br />
 ↓
 <br />
 Node.js + Express DAI Backend
+<br />
 ↓
 <br />
 Manifest Manipulation
+<br />
 ↓
 <br />
 Ad Injection
+<br />
 ↓
 <br />
 Modified HLS Manifest
+<br />
 ↓
 <br />
 hls.js Playback
 
-## Current V1 Capabilities
+### Current V1 Capabilities
 
 - Mid-roll ad insertion
 - Manifest-level ad stitching
