@@ -287,3 +287,11 @@ hls.loadSource("/hls/master.m3u8");
 - Keep HLS files inside public/  
 
 ---
+
+## Next steps
+
+- Build authentication (prioritize Google sign-in)
+- Build Session Tracking (userId, sessionId added to every existing console.log() event)
+- Build analytics events API (POST /analytics/events)
+- Build Analytics Dashboard (separate application)
+- Add "Continue Watching" feature for each user
