@@ -1,4 +1,21 @@
+# ======================================
+# Dependencies
+# ======================================
+
+node_modules/
+
+# ======================================
+# Environment Variables & Secrets
+# ======================================
+
+.env
+.env.*
+!.env.example
+
+# ======================================
 # Logs
+# ======================================
+
 logs
 *.log
 npm-debug.log*
@@ -7,25 +24,96 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# ======================================
+# Build Outputs
+# ======================================
+
+dist/
+dist-ssr/
+build/
+coverage/
+
+# ======================================
+# Vite
+# ======================================
+
+.vite/
+
+# ======================================
+# Local Config Files
+# ======================================
+
 *.local
 
-# FFmpeg source tree (not part of this project)
+# ======================================
+# FFmpeg source tree (not part of project)
+# ======================================
+
 ffmpeg/
 
-# Editor directories and files
+# ======================================
+# Large Video Assets
+# ======================================
+
+public/videos/avengers_final.mp4
+
+# Future large assets
+public/videos/*.mp4
+public/raw-videos/
+public/uploads/
+
+# ======================================
+# MongoDB Local Data
+# ======================================
+
+mongodb-data/
+data/db/
+
+# ======================================
+# IDE / Editors
+# ======================================
+
 .vscode/*
 !.vscode/extensions.json
-.idea
+
+.idea/
+
+# ======================================
+# OS Files
+# ======================================
+
 .DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# ======================================
+# Visual Studio
+# ======================================
+
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+
+# ======================================
+# Temporary Files
+# ======================================
+
 *.sw?
+*.tmp
+*.temp
 
-# Large video files (use Git LFS or external storage)
-public/videos/avengers_final.mp4
+# ======================================
+# Certificates / Keys
+# ======================================
 
+*.pem
+*.key
+*.crt
+
+# ======================================
+# Cache
+# ======================================
+.cache/

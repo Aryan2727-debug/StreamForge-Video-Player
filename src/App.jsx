@@ -1,10 +1,25 @@
-import VideoPlayer from './components/VideoPlayer'
-import './App.css'
+import VideoPlayer from './components/VideoPlayer';
+import LoginButton from "./components/LoginButton";
+import UserProfile from "./components/UserProfile";
+import useAuth from "./auth/useAuth";
+import './App.css';
 
 function App() {
-   return (
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div className="app">Loading...</div>;
+  }
+
+  return (
     <div className="app">
-      <h1>StreamForge Player</h1>
+      <header className="app-header">
+        {
+          isAuthenticated
+            ? <UserProfile />
+            : <LoginButton />
+        }
+      </header>
       <VideoPlayer />
     </div>
   );
