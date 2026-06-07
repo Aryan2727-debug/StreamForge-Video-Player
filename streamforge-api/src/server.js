@@ -12,10 +12,25 @@ dotenv.config();
 const PORT = process.env.PORT || 5001;
 const app = express();
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://stream-forge-video-player.vercel.app"
+];
+
 app.use(
     cors({
-        // eslint-disable-next-line no-undef
-        origin: process.env.CLIENT_URL,
+        origin: (origin, callback) => {
+            if (
+                !origin ||
+                allowedOrigins.includes(origin)
+            ) {
+                callback(null, true);
+            } else {
+                callback(
+                    new Error("Not allowed by CORS")
+                );
+            }
+        },
         credentials: true
     })
 );
