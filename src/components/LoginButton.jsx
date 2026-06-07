@@ -1,6 +1,8 @@
+import { API_BASE_URL } from "../config/api";
+
 const LoginButton = () => {
     const handleLogin = () => {
-        window.location.href = "http://localhost:5001/auth/google";
+        window.location.href = `${API_BASE_URL}/auth/google`;
     };
 
     return (

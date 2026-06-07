@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
+import { API_BASE_URL } from "../config/api";
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -8,7 +9,7 @@ const AuthProvider = ({ children }) => {
     async function logout() {
         try {
             await fetch(
-                "http://localhost:5001/auth/logout",
+                `${API_BASE_URL}/auth/logout`,
                 {
                     method: "POST",
                     credentials: "include"
@@ -26,7 +27,7 @@ const AuthProvider = ({ children }) => {
         const fetchCurrentUser = async () => {
             try {
                 const response = await fetch(
-                    "http://localhost:5001/auth/me",
+                    `${API_BASE_URL}/auth/me`,
                     {
                         credentials: "include"
                     }
