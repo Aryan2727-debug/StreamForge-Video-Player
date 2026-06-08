@@ -289,7 +289,6 @@ hls.loadSource("/hls/master.m3u8");
 ---
 
 ## Next steps
-- Fix authentication bug on production (staying logged in even after logging out)
 - Build Session Tracking (userId, sessionId added to every existing console.log() event)
 - Build analytics events API (POST /analytics/events)
 - Build Analytics Dashboard (separate application)
