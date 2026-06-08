@@ -3,6 +3,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 
 import generateToken from "../utils/generateToken.js";
+import { getCookieOptions } from "../utils/cookieOptions.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -29,15 +30,14 @@ router.get(
     (req, res) => {
         const token = generateToken(req.user);
 
-        // eslint-disable-next-line no-undef
-        const isProduction = process.env.NODE_ENV === "production";
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: isProduction,
-            sameSite: isProduction ? "none" : "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie(
+            "token",
+            token,
+            {
+                ...getCookieOptions(),
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            }
+        );
 
         res.redirect(
             // eslint-disable-next-line no-undef
@@ -95,11 +95,10 @@ router.get(
     Logout
 */
 router.post("/logout", (req, res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false
-    });
+    res.clearCookie(
+        "token",
+        getCookieOptions()
+    );
 
     res.json({
         message: "Logged out"
