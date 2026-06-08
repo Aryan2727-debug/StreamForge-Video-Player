@@ -604,41 +604,159 @@
 /* -----------------------------------------------------------
    Responsive
    ----------------------------------------------------------- */
-@media (max-width: 720px) {
+/* -----------------------------------------------------------
+   Tablet
+   ----------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .video-selector {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+  }
+
   .player-container {
-    margin: 12px auto;
-    border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+    margin: 16px auto;
   }
+
   .controls {
-    gap: 8px;
-    padding: 20px 12px 10px;
+    gap: 10px;
+    padding: 20px 16px 12px;
   }
-  .play-btn {
-    width: 38px;
-    height: 38px;
-  }
-  .time {
-    font-size: 12px;
-    min-width: 76px;
-  }
-  .quality {
-    font-size: 11px;
-    min-width: 42px;
-    padding: 3px 6px;
-  }
-  .quality-selector {
-    font-size: 12px;
-    padding: 6px 22px 6px 10px;
+
+  .volume-slider {
+    width: 70px;
   }
 }
 
+/* -----------------------------------------------------------
+   Mobile
+   ----------------------------------------------------------- */
+@media (max-width: 768px) {
+
+  .video-selector {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .video-label {
+    text-align: left;
+  }
+
+  .select-wrapper {
+    width: 100%;
+  }
+
+  .select-wrapper select {
+    width: 100%;
+  }
+
+  .player-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    padding: 14px 10px 10px;
+  }
+
+  .play-btn,
+  .restart-btn,
+  .fullscreen-btn {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+  }
+
+  .time {
+    font-size: 12px;
+    min-width: auto;
+  }
+
+  .volume-controls {
+    gap: 6px;
+  }
+
+  .volume-slider {
+    width: 60px;
+  }
+
+  .quality-selector {
+    max-width: 90px;
+    font-size: 12px;
+  }
+
+  .dai-toggle {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .seek-bar {
+    order: 999;
+
+    width: 100%;
+    flex: 0 0 100%;
+
+    margin-top: 6px;
+  }
+
+  .thumbnail-preview {
+    display: none;
+  }
+
+  .center-play-btn {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+/* -----------------------------------------------------------
+   Small Phones
+   ----------------------------------------------------------- */
 @media (max-width: 480px) {
-  /* On very small screens, hide the static quality readout —
-     the dropdown still shows the active level. */
+
+  .controls {
+    gap: 6px;
+    padding: 12px 8px 8px;
+  }
+
   .quality {
     display: none;
   }
+
   .time {
-    min-width: 70px;
+    font-size: 11px;
+  }
+
+  .volume-controls {
+    display: none;
+  }
+
+  .quality-selector {
+    max-width: 80px;
+  }
+
+  .dai-toggle {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .center-play-btn {
+    width: 64px;
+    height: 64px;
+  }
+
+  .center-play-btn svg {
+    transform: scale(0.85);
   }
 }
