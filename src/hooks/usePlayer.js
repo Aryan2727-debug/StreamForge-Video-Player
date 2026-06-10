@@ -59,6 +59,7 @@ const usePlayer = () => {
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
             video.play();
             setIsPlaying(true);
+            trackEvent("playback_started", { video: currentVideo });
             // capturing the available quality levels
             setLevels(hls.levels);
         });
@@ -108,6 +109,7 @@ const usePlayer = () => {
         video.addEventListener("playing", () => {
             setShowThumbnail(false);
         });
+        video.addEventListener("ended", handlePlaybackEnded);
         document.addEventListener("fullscreenchange", handleFullscreenChange);
 
         return () => {
@@ -118,6 +120,7 @@ const usePlayer = () => {
             video.removeEventListener("playing", () => {
                 setShowThumbnail(false);
             });
+            video.removeEventListener("ended", handlePlaybackEnded);
             document.removeEventListener("fullscreenchange", handleFullscreenChange);
         };
     }, []);
@@ -163,6 +166,10 @@ const usePlayer = () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    function handlePlaybackEnded() {
+        trackEvent("playback_ended", { video: currentVideo });
+    }
 
     // toggle play/pause state
     function togglePlay() {

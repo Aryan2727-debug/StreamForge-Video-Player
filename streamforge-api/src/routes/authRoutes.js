@@ -1,10 +1,12 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 import generateToken from "../utils/generateToken.js";
 import { getCookieOptions } from "../utils/cookieOptions.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import Session from "../models/Session.js";
 
 const router = express.Router();
 
@@ -27,8 +29,18 @@ router.get(
         session: false,
         failureRedirect: "/auth/failure"
     }),
-    (req, res) => {
-        const token = generateToken(req.user);
+    async (req, res) => {
+        const sessionId = `sess_${uuidv4()}`;
+
+        await Session.create({
+            sessionId,
+            userId: req.user._id,
+            userAgent: req.headers["user-agent"],
+            platform: req.headers["sec-ch-ua-platform"] || "unknown"
+        });
+
+        console.log("✅ Session created:", sessionId);
+        const token = generateToken(req.user, sessionId);
 
         res.cookie(
             "token",
@@ -39,10 +51,8 @@ router.get(
             }
         );
 
-        res.redirect(
-            // eslint-disable-next-line no-undef
-            `${process.env.CLIENT_URL}`
-        );
+        // eslint-disable-next-line no-undef
+        res.redirect(process.env.CLIENT_URL);
     }
 );
 
@@ -86,7 +96,8 @@ router.get(
             id: req.user._id,
             name: req.user.name,
             email: req.user.email,
-            avatar: req.user.avatar
+            avatar: req.user.avatar,
+            sessionId: req.auth.sessionId
         });
     }
 );

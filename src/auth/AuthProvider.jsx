@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
 import { API_BASE_URL } from "../config/api";
+import { initializeAnalytics, clearAnalytics, trackEvent } from "../services/analytics";
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -17,6 +18,8 @@ const AuthProvider = ({ children }) => {
             );
 
             setUser(null);
+            trackEvent("logout");
+            clearAnalytics();
             window.location.href = "/";
         } catch (error) {
             console.error("Logout failed:", error);
@@ -35,11 +38,17 @@ const AuthProvider = ({ children }) => {
 
                 if (!response.ok) {
                     setUser(null);
+                    trackEvent("login_failed");
                     return;
                 }
 
                 const userData = await response.json();
                 setUser(userData);
+                initializeAnalytics({
+                    userId: userData.id,
+                    sessionId: userData.sessionId
+                });
+                trackEvent("login_success");
             } catch (error) {
                 console.error("Failed to fetch current user:", error);
                 setUser(null);
