@@ -289,6 +289,5 @@ hls.loadSource("/hls/master.m3u8");
 ---
 
 ## Next steps
-- Build analytics events API (POST /analytics/events)
 - Build Analytics Dashboard (separate application)
 - Add "Continue Watching" feature for each user
