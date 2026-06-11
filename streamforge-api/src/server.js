@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js"
 import passport from "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use("/auth", authRoutes);
+app.use("/analytics", analyticsRoutes);
 
 connectDB();
 
