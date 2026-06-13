@@ -15,7 +15,8 @@ const app = express();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://stream-forge-video-player.vercel.app"
+    "https://stream-forge-video-player.vercel.app",
+    "http://localhost:5174",
 ];
 
 app.use(
