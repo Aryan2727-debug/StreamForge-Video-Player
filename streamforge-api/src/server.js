@@ -15,8 +15,9 @@ const app = express();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://stream-forge-video-player.vercel.app",
     "http://localhost:5174",
+    "https://stream-forge-video-player.vercel.app",
+    "https://stream-forge-analytics-dashboard.vercel.app"
 ];
 
 app.use(
@@ -28,9 +29,7 @@ app.use(
             ) {
                 callback(null, true);
             } else {
-                callback(
-                    new Error("Not allowed by CORS")
-                );
+                callback(new Error("Not allowed by CORS"));
             }
         },
         credentials: true

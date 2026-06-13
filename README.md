@@ -289,5 +289,12 @@ hls.loadSource("/hls/master.m3u8");
 ---
 
 ## Next steps
-- Build Analytics Dashboard (separate application)
 - Add "Continue Watching" feature for each user
+
+## Author
+
+Aryan Dev Shourie
+
+Frontend Engineer | Smart TV Developer | OTT Platform Engineer
+
+Built as part of the StreamForge ecosystem.
